@@ -33,9 +33,8 @@ func CloneConstruct(ctx *gin.Context) {
 		return
 	}
 
-	common.SuccessResponse(ctx, "")
+	common.SuccessResponse(ctx, "Data copied Successfully")
 	return
-
 
 	/* row := db.QueryRow("Select project_id,name,version,url,method, protocol,headers,request,response,degree, created_by, created_date, modified_by, modified_date FROM db1_flowxpert.registration Where id=?", uid)
 	err := row.Scan(&newuser.Project_id, &newuser.Name, &newuser.Version, &newuser.Url, &newuser.Method, &newuser.Protocol, &newuser.Headers, &newuser.Request, &newuser.Response, &newuser.Degree, &newuser.Created_by, &newuser.Created_date, &newuser.Modified_by, &newuser.Modified_date)
@@ -66,7 +65,6 @@ func CloneConstruct(ctx *gin.Context) {
 
 	c.JSON(200, gin.H{"result": fmt.Sprintf("%v rows affected", num_rows_effected)}) */
 }
-
 
 /* func CloneUser(c *gin.Context) {
 	var db, errdb = Conf.Connectdb()

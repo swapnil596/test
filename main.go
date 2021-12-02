@@ -1,7 +1,6 @@
 package main
 
 import (
-	"api-registration-backend/aws"
 	"api-registration-backend/common"
 	"api-registration-backend/config"
 	"api-registration-backend/server"
@@ -29,7 +28,7 @@ func main() {
 	settings := config.GetConfigurations()
 
 	// warming up the connections
-	aws.Init()
+	//aws.Init()
 
 	// set environment moe
 	gin.SetMode(gin.DebugMode)

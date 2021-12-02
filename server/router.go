@@ -2,7 +2,7 @@ package server
 
 import (
 	"api-registration-backend/common"
-	"api-registration-backend/controllers"
+	//"api-registration-backend/controllers"
 	"api-registration-backend/controllers/apis"
 	"net/http"
 	"reflect"
@@ -64,28 +64,13 @@ func NewRouter() *gin.Engine {
 		})
 	}
 
-	// declaring endpoints variables
-	health := new(controllers.HealthController)
-	create := new(apis.CreateController)
-	update := new(apis.UpdateController)
-	del := new(apis.DeleteController)
-	publish := new(apis.PublishController)
-
 	// binding a prefix to the registered APIs
 	APIGroup := router.Group("/api/v1")
 	{
-		APIGroup.GET("/health", health.Status)
-		APIGroup.POST("/health", health.Status)
-		APIGroup.POST("/frame", create.Construct)
-		APIGroup.PUT("/:api_id", update.Overhaul)
-		APIGroup.DELETE("/:api_id", del.Terminate)
-		APIGroup.PATCH("/:api_id/release", publish.Release)
-
 		//v1.GET("/tesconnect", connect.Tesconnect)
 		APIGroup.GET("/getallusers", apis.ListConstruct)
 		APIGroup.DELETE("/deleteuser/:id", apis.Terminate)
 		APIGroup.Handle("COPY", "/cloneuser/:id", apis.CloneConstruct)
-
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
