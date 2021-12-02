@@ -1,0 +1,119 @@
+basePath: /api/v1/
+definitions:
+  apis.CreateController:
+    properties:
+      apiType:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      project_id:
+        type: string
+      version:
+        type: string
+    required:
+    - apiType
+    - id
+    - name
+    type: object
+  common.JSONSuccessResult:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        type: object
+      message:
+        example: Success
+        type: string
+    type: object
+  models.APIStatus:
+    properties:
+      success:
+        example: true
+        type: boolean
+    type: object
+  models.Health:
+    properties:
+      status:
+        example: running
+        type: string
+    type: object
+host: localhost:8008
+info:
+  contact:
+    email: neil.haria@think360.ai
+    name: Neil Haria
+    url: https://www.swagger.io/support
+  description: A service where the user can register it's own pre-built APIs to eventually
+    consume in Workflow Designer & Journey Designer
+  termsOfService: https://swagger.io/terms/
+  title: FlowXpert API Framer
+  version: "2.0"
+paths:
+  /{api_id}:
+    delete:
+      consumes:
+      - application/json
+      description: checks if the API is registered or not, then disables the state
+        of the API if present
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONSuccessResult'
+            - properties:
+                code:
+                  type: integer
+                data:
+                  $ref: '#/definitions/models.APIStatus'
+                message:
+                  type: string
+              type: object
+      summary: disables the state of API
+      tags:
+      - Registration
+  /frame:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: info
+        in: body
+        name: createBaseFrame
+        required: true
+        schema:
+          $ref: '#/definitions/apis.CreateController'
+      produces:
+      - application/json
+      tags:
+      - Registration
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: health check to find the application is up and running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONSuccessResult'
+            - properties:
+                code:
+                  type: integer
+                data:
+                  $ref: '#/definitions/models.Health'
+                message:
+                  type: string
+              type: object
+      summary: get status of the application
+      tags:
+      - HealthCheck
+swagger: "2.0"

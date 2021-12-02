@@ -1,0 +1,16 @@
+server:
+  ip: "0.0.0.0"
+  port: ":8080"
+
+aws:
+  region: "ap-south-1"
+  key: ""
+  secret: ""
+  tables:
+    api_master: "flowxpert_api_master"
+
+  s3:
+    bucket: "flowxpert"
+
+extensions:
+  json: ".json"
