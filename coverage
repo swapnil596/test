@@ -1,4 +1,10 @@
 mode: set
+api-registration-backend/controllers/apis/update.go:13.33,40.18 5 1
+api-registration-backend/controllers/apis/update.go:49.2,60.16 11 1
+api-registration-backend/controllers/apis/update.go:66.2,67.8 2 1
+api-registration-backend/controllers/apis/update.go:40.18,42.48 1 1
+api-registration-backend/controllers/apis/update.go:42.48,46.4 2 1
+api-registration-backend/controllers/apis/update.go:60.16,64.3 2 1
 api-registration-backend/controllers/apis/cloneuser.go:15.39,18.18 2 1
 api-registration-backend/controllers/apis/cloneuser.go:23.2,30.16 5 1
 api-registration-backend/controllers/apis/cloneuser.go:36.2,37.8 2 1
