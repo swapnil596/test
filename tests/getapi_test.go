@@ -18,8 +18,6 @@ func TestListApiEndpoint(test *testing.T) {
 
 	router.GET(endpoint, apis.Apidetails)
 
-	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
-	// pass 'nil' as the third parameter.
 	req, _ := http.NewRequest(http.MethodGet, endpoint, nil)
 
 	TestHTTPResponse(test, router, req, func(w *httptest.ResponseRecorder) bool {
@@ -38,7 +36,7 @@ func TestGetMethod(t *testing.T) {
 
 	req, err := http.NewRequest(http.MethodGet, "/", nil)
 	if err != nil {
-		t.Fatalf("Couldn't create request: %v\n", err)
+		t.Fatalf("Unable to get Request %v\n", err)
 	}
 
 	// Create a response recorder so you can inspect the response
@@ -50,7 +48,7 @@ func TestGetMethod(t *testing.T) {
 
 	// Check to see if the response was what you expected
 	if w.Code == http.StatusOK {
-		t.Logf("Expected to get status %d is same ast %d\n", http.StatusOK, w.Code)
+		t.Logf("Expected to get status as %d is same as %d\n", http.StatusOK, w.Code)
 	} else {
 		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, w.Code)
 	}

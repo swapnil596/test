@@ -1,7 +1,6 @@
 package models
 
 import (
-	"api-registration-backend/config"
 	Conf "api-registration-backend/config"
 	"errors"
 	"fmt"
@@ -103,7 +102,7 @@ func CloneUser(newuser ShowUser, id string) (error, ShowUser) {
 }
 
 func CreateApi(regs ShowUser) (string, error) {
-	var db, errdb = config.Connectdb()
+	var db, errdb = Conf.Connectdb()
 	uuid, _ := uuid.NewRandom()
 	if errdb != nil {
 		return uuid.String(), errdb
@@ -157,7 +156,8 @@ func PermaDeleteUser(id string) error {
 }
 
 func GetApidetails() ([]map[string]string, error) {
-	var db, errdb = config.Connectdb()
+	var db, errdb = Conf.Connectdb()
+	id := ("id")
 
 	var regs []map[string]string
 
@@ -167,7 +167,7 @@ func GetApidetails() ([]map[string]string, error) {
 
 	defer db.Close()
 
-	rows, err := db.Query("SELECT headers, url, method, request, response FROM abhic.abhic_api_registration;")
+	rows, err := db.Query("SELECT * FROM abhic.abhic_api_registration WHERE id=?;", id)
 
 	if err != nil {
 		return regs, err
@@ -185,10 +185,24 @@ func GetApidetails() ([]map[string]string, error) {
 			"response": response,
 		}
 
-		regs = append(regs, reg)
+		regs = newFunction1(regs, reg)
 	}
 
 	defer rows.Close()
 
 	return regs, err
+}
+
+func newFunction1(regs []map[string]string, reg map[string]string) []map[string]string {
+	regs = newFunction(regs, reg)
+	return regs
+}
+
+func newFunction(regs []map[string]string, reg map[string]string) []map[string]string {
+	regs = append(regs, reg)
+	return regs
+}
+
+func Param(s string) {
+	panic("unimplemented")
 }

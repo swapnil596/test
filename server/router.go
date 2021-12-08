@@ -72,7 +72,7 @@ func NewRouter() *gin.Engine {
 		APIGroup.DELETE("/deleteuser/:id", apis.Terminate)
 		APIGroup.Handle("COPY", "/cloneuser/:id", apis.CloneConstruct)
 		APIGroup.POST("/registration/api", apis.Construct)
-		APIGroup.GET("/registration/api", apis.Apidetails)
+		APIGroup.GET("/registration/api/:id", apis.Apidetails)
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

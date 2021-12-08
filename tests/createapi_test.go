@@ -20,19 +20,17 @@ func TestCreatemethod(t *testing.T) {
 
 	req, err := http.NewRequest(http.MethodPost, "/", nil)
 	if err != nil {
-		t.Fatalf("Couldn't create request: %v\n", err)
+		t.Fatalf("Unable to create request: %v\n", err)
 	}
 
-	// Create a response recorder so you can inspect the response
 	w := httptest.NewRecorder()
 
-	// Perform the request
 	r.ServeHTTP(w, req)
 	fmt.Println(w.Body)
 
 	if w.Code == http.StatusOK {
-		t.Logf("Expected to get status %d is same ast %d\n", http.StatusOK, w.Code)
+		t.Logf("Expected to get status as %d is same as %d\n", http.StatusOK, w.Code)
 	} else {
-		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, w.Code)
+		t.Fatalf("Expected to get status as %d but instead got %d\n", http.StatusOK, w.Code)
 	}
 }
