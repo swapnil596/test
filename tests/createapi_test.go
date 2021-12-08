@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func TestPostMethod(t *testing.T) {
+func TestCreatemethod(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 
