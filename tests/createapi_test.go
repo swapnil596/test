@@ -15,8 +15,6 @@ func TestCreatemethod(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 
-	// Setup your router, just like you did in your main function, and
-	// register your routes
 	r := gin.Default()
 	r.POST("/registration/api", apis.Construct)
 
