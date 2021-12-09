@@ -149,7 +149,7 @@ func CloneUser(newuser ShowUser, id string) (error, ShowUser) {
 }
 
 func CreateApi(regs ShowUser) (string, error) {
-	var db, errdb = config.Connectdb()
+	var db, errdb = Conf.Connectdb()
 	uuid, _ := uuid.NewRandom()
 	if errdb != nil {
 		return uuid.String(), errdb
@@ -245,4 +245,50 @@ func PermaDeleteUser(id string) error {
 		return errors.New("Invalid ID")
 	}
 	return nil
+}
+
+func GetApidetails() ([]map[string]string, error) {
+	var db, errdb = Conf.Connectdb()
+	id := ("id")
+
+	var regs []map[string]string
+
+	if errdb != nil {
+		return regs, errdb
+	}
+
+	defer db.Close()
+
+	rows, err := db.Query("SELECT * FROM abhic.abhic_api_registration WHERE id=?;", id)
+
+	if err != nil {
+		return regs, err
+	}
+
+	for rows.Next() {
+		var headers, url, method, request, response string
+		rows.Scan(&headers, &url, &method, &request, &response)
+
+		reg := map[string]string{
+			"headers":  headers,
+			"url":      url,
+			"method":   method,
+			"request":  request,
+			"response": response,
+		}
+
+		regs = newFunction(regs, reg)
+	}
+
+	defer rows.Close()
+
+	return regs, err
+}
+func newFunction(regs []map[string]string, reg map[string]string) []map[string]string {
+	regs = newFunction(regs, reg)
+	return regs
+}
+
+func Param(s string) {
+	panic("unimplemented")
 }
