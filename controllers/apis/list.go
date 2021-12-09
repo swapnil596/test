@@ -13,8 +13,8 @@ func ListConstruct(ctx *gin.Context) {
 	draft := ctx.Request.URL.Query().Get("draft")
 	page_s := ctx.Request.URL.Query().Get("page")
 
-	//user, err := models.ListAllUsers()
-	user, err := models.ListAllUsers(enable, disable, draft, page_s)
+	//user, err := models.ListAllApis()
+	user, err := models.ListAllApis(enable, disable, draft, page_s)
 
 	if err != nil {
 		return

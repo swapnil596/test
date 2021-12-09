@@ -16,14 +16,14 @@ func TestUpdateUserEndpoint(test *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	// set dummy record for testing
-	var ResultUser models.ShowUser
+	var ResultUser models.ApiRegistration
 
 	ResultUser.Name = "NamrataUpdate"
 	ResultUser.Version = "V2"
 	ResultUser.Protocol = "P2"
 	ResultUser.Degree = 0
-	ResultUser.Project_id = 101
-	ResultUser.Created_by = "A2"
+	ResultUser.ProjectId = 101
+	ResultUser.CreatedBy = "A2"
 
 	id, err := models.CreateApi(ResultUser)
 	if err != nil {
@@ -43,7 +43,7 @@ func TestUpdateUserEndpoint(test *testing.T) {
 		statusOK := w.Code == http.StatusOK
 
 		// cleanup
-		err = models.PermaDeleteUser(id)
+		err = models.PermaDeleteApi(id)
 		if err != nil {
 			test.Logf(err.Error())
 		}
@@ -56,14 +56,14 @@ func TestUpdateUserInvalidJson(test *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	// set dummy record for testing
-	var ResultUser models.ShowUser
+	var ResultUser models.ApiRegistration
 
 	ResultUser.Name = "NamrataUpdate"
 	ResultUser.Version = "V2"
 	ResultUser.Protocol = "P2"
 	ResultUser.Degree = 0
-	ResultUser.Project_id = 101
-	ResultUser.Created_by = "A2"
+	ResultUser.ProjectId = 101
+	ResultUser.CreatedBy = "A2"
 
 	id, err := models.CreateApi(ResultUser)
 	if err != nil {
@@ -83,7 +83,7 @@ func TestUpdateUserInvalidJson(test *testing.T) {
 		statusOK := w.Code != http.StatusOK
 
 		// cleanup
-		err = models.PermaDeleteUser(id)
+		err = models.PermaDeleteApi(id)
 		if err != nil {
 			test.Logf(err.Error())
 		}
@@ -96,14 +96,14 @@ func TestUpdateUserInvalidDegree(test *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	// set dummy record for testing
-	var ResultUser models.ShowUser
+	var ResultUser models.ApiRegistration
 
 	ResultUser.Name = "NamrataUpdate"
 	ResultUser.Version = "V2"
 	ResultUser.Protocol = "P2"
 	ResultUser.Degree = 0
-	ResultUser.Project_id = 101
-	ResultUser.Created_by = "A2"
+	ResultUser.ProjectId = 101
+	ResultUser.CreatedBy = "A2"
 
 	id, err := models.CreateApi(ResultUser)
 	if err != nil {
@@ -123,7 +123,7 @@ func TestUpdateUserInvalidDegree(test *testing.T) {
 		statusOK := w.Code != http.StatusOK
 
 		// cleanup
-		err = models.PermaDeleteUser(id)
+		err = models.PermaDeleteApi(id)
 		if err != nil {
 			test.Logf(err.Error())
 		}

@@ -9,15 +9,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Apidetails(ctx *gin.Context) {
-	reg, err := models.GetApidetails()
+func GetDetails(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	reg, err := models.GetApiDetails(id)
 
 	if err != nil {
 		common.FailResponse(ctx, http.StatusInternalServerError, "Error", gin.H{"errors": validations.ValidateErrors(err)})
 		return
 	}
 
-	//common.SuccessResponse(ctx, reg)
-	ctx.JSON(http.StatusOK, reg)
-	//return
+	common.SuccessResponse(ctx, reg)
+	return
 }

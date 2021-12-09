@@ -15,24 +15,24 @@ func Overhaul(ctx *gin.Context) {
 	degree := ctx.Request.URL.Query().Get("degree")
 
 	type TempApi struct {
-		Id            string         `json:"id" form:"id"`
-		Project_id    int            `json:"project_id" form:"project_id"`
-		Name          string         `json:"name" form:"name"`
-		Version       string         `json:"version" form:"version"`
-		Url           string         `json:"url" form:"url"`
-		Method        string         `json:"method" form:"method"`
-		Protocol      string         `json:"protocol" form:"protocol"`
-		Headers       string         `json:"headersy" form:"headers"`
-		Request       string         `json:"request" form:"request"`
-		Response      string         `json:"response" form:"response"`
-		QueryParams   string         `json:"query_params" form:"query_params"`
-		StatusCode    sql.NullInt64  `json:"status_code" form:"status_code"`
-		Degree        int            `json:"degree" form:"degree"`
-		Active        bool           `json:"active" form:"active"`
-		Created_by    string         `json:"created_by" form:"created_by"`
-		Created_date  string         `json:"created_date" form:"created_date"`
-		Modified_by   sql.NullString `json:"modified_by" form:"modified_by"`
-		Modified_date sql.NullString `json:"modified_date" form:"modified_date"`
+		Id           string         `json:"id" form:"id"`
+		ProjectId    int            `json:"project_id" form:"project_id"`
+		Name         string         `json:"name" form:"name"`
+		Version      string         `json:"version" form:"version"`
+		Url          string         `json:"url" form:"url"`
+		Method       string         `json:"method" form:"method"`
+		Protocol     string         `json:"protocol" form:"protocol"`
+		Headers      string         `json:"headersy" form:"headers"`
+		Request      string         `json:"request" form:"request"`
+		Response     string         `json:"response" form:"response"`
+		QueryParams  string         `json:"query_params" form:"query_params"`
+		Degree       int            `json:"degree" form:"degree"`
+		Active       bool           `json:"active" form:"active"`
+		CreatedBy    string         `json:"created_by" form:"created_by"`
+		CreatedDate  string         `json:"created_date" form:"created_date"`
+		ModifiedBy   sql.NullString `json:"modified_by" form:"modified_by"`
+		ModifiedDate sql.NullString `json:"modified_date" form:"modified_date"`
+		RateLimit    int            `json:"rate_limit" form:"rate_limit"`
 	}
 
 	var tempAPI TempApi
@@ -46,7 +46,7 @@ func Overhaul(ctx *gin.Context) {
 		}
 	}
 
-	var updateuser models.ShowUser
+	var updateuser models.ApiRegistration
 	updateuser.Name = tempAPI.Name
 	updateuser.Url = sql.NullString{String: tempAPI.Url, Valid: true}
 	updateuser.Method = sql.NullString{String: tempAPI.Method, Valid: true}
@@ -54,9 +54,11 @@ func Overhaul(ctx *gin.Context) {
 	updateuser.Request = sql.NullString{String: tempAPI.Request, Valid: true}
 	updateuser.Response = sql.NullString{String: tempAPI.Response, Valid: true}
 	updateuser.QueryParams = sql.NullString{String: tempAPI.QueryParams, Valid: true}
-	updateuser.StatusCode = tempAPI.StatusCode
+	updateuser.ModifiedBy = sql.NullString{String: tempAPI.ModifiedBy.String, Valid: true}
+	updateuser.ModifiedDate = sql.NullString{String: tempAPI.ModifiedDate.String, Valid: true}
+	updateuser.RateLimit = tempAPI.RateLimit
 
-	err := models.UpdateUser(updateuser, id, degree)
+	err := models.UpdateApi(updateuser, id, degree)
 	if err != nil {
 		common.FailResponse(ctx, http.StatusInternalServerError, "Error",
 			gin.H{"errors": validations.ValidateErrors(err)})

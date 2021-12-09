@@ -2,9 +2,8 @@ package apis
 
 import (
 	"api-registration-backend/common"
-	Conf "api-registration-backend/config"
+	"api-registration-backend/config"
 	"api-registration-backend/models"
-	modeluser "api-registration-backend/models"
 	"api-registration-backend/validations"
 	"log"
 	"net/http"
@@ -13,7 +12,7 @@ import (
 )
 
 func CloneConstruct(ctx *gin.Context) {
-	var db, errdb = Conf.Connectdb()
+	var db, errdb = config.Connectdb()
 
 	if errdb != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"result": "Missing Connection"})
@@ -24,9 +23,9 @@ func CloneConstruct(ctx *gin.Context) {
 
 	id := ctx.Params.ByName("id")
 
-	var newuser modeluser.ShowUser
+	var newuser models.ApiRegistration
 
-	err, _ := models.CloneUser(newuser, id)
+	err, _ := models.CopyApi(newuser, id)
 	if err != nil {
 		common.FailResponse(ctx, http.StatusInternalServerError, "Error",
 			gin.H{"errors": validations.ValidateErrors(err)})
