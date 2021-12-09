@@ -4,22 +4,20 @@ import (
 	"api-registration-backend/common"
 	"api-registration-backend/models"
 	"fmt"
-
 	"net/http"
 	"net/http/httptest"
-
 	"testing"
 
 	"github.com/gin-gonic/gin"
 )
 
-func TestCloneUser(test *testing.T) {
+func TestGetApiDetailsEndpoint(test *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	// set dummy record for testing
 	var ResultUser models.ApiRegistration
 
-	ResultUser.Name = "NamrataCopy"
+	ResultUser.Name = "NamrataGetdetails"
 	ResultUser.ProjectId = 101
 	ResultUser.Version = "V2"
 	ResultUser.Protocol = "P2"
@@ -33,38 +31,43 @@ func TestCloneUser(test *testing.T) {
 	}
 
 	router := gin.Default()
-	endpoint := fmt.Sprintf("/api/v1/cloneuser/%s", id)
+	endpoint := fmt.Sprintf("/api/v1/registration/api/%s", id)
 
-	router.POST("/api/v1/cloneuser/:id", CloneConstruct)
+	router.GET("/api/v1/registration/api/:id", GetDetails)
 
-	req, _ := http.NewRequest(http.MethodPost, endpoint, nil)
+	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
+	// pass 'nil' as the third parameter.
+	req, _ := http.NewRequest(http.MethodGet, endpoint, nil)
 
 	common.TestHTTPResponse(test, router, req, func(w *httptest.ResponseRecorder) bool {
 		// Check the status code is what we expect.
 		statusOK := w.Code == http.StatusOK
 
-		// clean up code
-		_ = models.PermaDeleteApi(id)
+		// cleanup
+		err = models.PermaDeleteApi(id)
+		if err != nil {
+			test.Logf(err.Error())
+		}
 
 		return statusOK
 	})
 }
 
-func TestCloneUserInvalidId(test *testing.T) {
-	// TODO: fix this
+func TestGetApiDetailsInvalidId(test *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	router := gin.Default()
-	endpoint := fmt.Sprintf("/api/v1/cloneuser/%s", "invalid-id")
+	endpoint := fmt.Sprintf("/api/v1/registration/api/%s", "invalid-id")
 
-	router.POST("/api/v1/cloneuser/:id", CloneConstruct)
+	router.GET("/api/v1/registration/api/:id", GetDetails)
 
-	req, _ := http.NewRequest(http.MethodPost, endpoint, nil)
+	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
+	// pass 'nil' as the third parameter.
+	req, _ := http.NewRequest(http.MethodGet, endpoint, nil)
 
 	common.TestHTTPResponse(test, router, req, func(w *httptest.ResponseRecorder) bool {
 		// Check the status code is what we expect.
 		statusOK := w.Code != http.StatusOK
 		return statusOK
 	})
-
 }

@@ -2,7 +2,6 @@ package models
 
 import (
 	"api-registration-backend/config"
-	Conf "api-registration-backend/config"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -12,8 +11,8 @@ import (
 	"github.com/google/uuid"
 )
 
-func ListAllUsers(enable string, disable string, draft string, page_s string) ([]map[string]string, error) {
-	var db, errdb = Conf.Connectdb()
+func ListAllApis(enable string, disable string, draft string, page_s string) ([]map[string]string, error) {
+	var db, errdb = config.Connectdb()
 
 	var users []map[string]string
 
@@ -87,8 +86,8 @@ func ListAllUsers(enable string, disable string, draft string, page_s string) ([
 	return users, err
 }
 
-func DeleteUser(id string) error {
-	var db, errdb = Conf.Connectdb()
+func DeleteApi(id string) error {
+	var db, errdb = config.Connectdb()
 
 	if errdb != nil {
 		return errdb
@@ -118,8 +117,8 @@ func DeleteUser(id string) error {
 	return nil
 }
 
-func CloneUser(newuser ShowUser, id string) (error, ShowUser) {
-	var db, errdb = Conf.Connectdb()
+func CopyApi(newuser ApiRegistration, id string) (error, ApiRegistration) {
+	var db, errdb = config.Connectdb()
 
 	if errdb != nil {
 		return errdb, newuser
@@ -127,12 +126,12 @@ func CloneUser(newuser ShowUser, id string) (error, ShowUser) {
 	defer db.Close()
 
 	row := db.QueryRow("Select * FROM abhic.abhic_api_registration Where id=?", id)
-	err := row.Scan(&newuser.Id, &newuser.Project_id, &newuser.Name, &newuser.Version, &newuser.Url, &newuser.Method, &newuser.Protocol, &newuser.Headers, &newuser.Request, &newuser.Response, &newuser.QueryParams, &newuser.StatusCode, &newuser.Degree, &newuser.Created_by, &newuser.Created_date, &newuser.Modified_by, &newuser.Modified_date, &newuser.Active)
+	err := row.Scan(&newuser.Id, &newuser.ProjectId, &newuser.Name, &newuser.Version, &newuser.Url, &newuser.Method, &newuser.Protocol, &newuser.Headers, &newuser.Request, &newuser.Response, &newuser.QueryParams, &newuser.Degree, &newuser.CreatedBy, &newuser.CreatedDate, &newuser.ModifiedBy, &newuser.ModifiedDate, &newuser.Active, &newuser.RateLimit)
 	if err != nil {
 		return err, newuser
 	}
 
-	stmt, err := db.Prepare("INSERT INTO abhic.abhic_api_registration (id,project_id,name,version,url,method, protocol,headers,request,response,query_params,status_code,degree,created_by, created_date, modified_by, modified_date,active) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+	stmt, err := db.Prepare("INSERT INTO abhic.abhic_api_registration (id,project_id,name,version,url,method, protocol,headers,request,response,query_params,degree,created_by, created_date, modified_by, modified_date,active,real_limit) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
 	defer stmt.Close()
 
 	if err != nil {
@@ -141,15 +140,15 @@ func CloneUser(newuser ShowUser, id string) (error, ShowUser) {
 	}
 	uuid, _ := uuid.NewRandom()
 
-	_, err = stmt.Exec(uuid, newuser.Project_id, newuser.Name, newuser.Version, newuser.Url, newuser.Method, newuser.Protocol, newuser.Headers, newuser.Request, newuser.Response, newuser.QueryParams, newuser.StatusCode, newuser.Degree, newuser.Created_by, newuser.Created_date, newuser.Modified_by, newuser.Modified_date, newuser.Active)
+	_, err = stmt.Exec(uuid, newuser.ProjectId, newuser.Name, newuser.Version, newuser.Url, newuser.Method, newuser.Protocol, newuser.Headers, newuser.Request, newuser.Response, newuser.QueryParams, newuser.Degree, newuser.CreatedBy, newuser.CreatedDate, newuser.ModifiedBy, newuser.ModifiedDate, newuser.Active, newuser.RateLimit)
 	if err != nil {
 		return err, newuser
 	}
 	return nil, newuser
 }
 
-func CreateApi(regs ShowUser) (string, error) {
-	var db, errdb = Conf.Connectdb()
+func CreateApi(regs ApiRegistration) (string, error) {
+	var db, errdb = config.Connectdb()
 	uuid, _ := uuid.NewRandom()
 	if errdb != nil {
 		return uuid.String(), errdb
@@ -162,7 +161,7 @@ func CreateApi(regs ShowUser) (string, error) {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(uuid, regs.Name, regs.Project_id, regs.Version, regs.Protocol, regs.Created_by, regs.Degree)
+	_, err = stmt.Exec(uuid, regs.Name, regs.ProjectId, regs.Version, regs.Protocol, regs.CreatedBy, regs.Degree)
 
 	if err != nil {
 		return uuid.String(), err
@@ -170,7 +169,7 @@ func CreateApi(regs ShowUser) (string, error) {
 	return uuid.String(), err
 }
 
-func UpdateUser(updateuser ShowUser, id string, degree string) error {
+func UpdateApi(updateuser ApiRegistration, id string, degree string) error {
 	var db, errdb = config.Connectdb()
 
 	if errdb != nil {
@@ -198,7 +197,7 @@ func UpdateUser(updateuser ShowUser, id string, degree string) error {
 		return nil
 	}
 
-	stmt, err := db.Prepare("UPDATE abhic.abhic_api_registration SET name=?, url=?, method=?, headers=?, request=?, response=?, query_params=?, status_code=?, modified_by=?, modified_date=? WHERE id=?;")
+	stmt, err := db.Prepare("UPDATE abhic.abhic_api_registration SET name=?, rate_limit=?, url=?, method=?, headers=?, request=?, response=?, query_params=?, modified_by=?, modified_date=? WHERE id=?;")
 
 	if err != nil {
 		return err
@@ -206,7 +205,7 @@ func UpdateUser(updateuser ShowUser, id string, degree string) error {
 	defer stmt.Close()
 
 	currentTime := time.Now()
-	_, err = stmt.Exec(updateuser.Name, updateuser.Url, updateuser.Method, updateuser.Headers, updateuser.Request, updateuser.Response, updateuser.QueryParams, updateuser.StatusCode, "", currentTime.Format("2006-01-02"), id)
+	_, err = stmt.Exec(updateuser.Name, updateuser.RateLimit, updateuser.Url, updateuser.Method, updateuser.Headers, updateuser.Request, updateuser.Response, updateuser.QueryParams, "", currentTime.Format("2006-01-02"), id)
 
 	if err != nil {
 		return err
@@ -216,8 +215,8 @@ func UpdateUser(updateuser ShowUser, id string, degree string) error {
 }
 
 // This Delete Function is only used for Testing.
-func PermaDeleteUser(id string) error {
-	var db, errdb = Conf.Connectdb()
+func PermaDeleteApi(id string) error {
+	var db, errdb = config.Connectdb()
 
 	if errdb != nil {
 		return errdb
@@ -247,48 +246,36 @@ func PermaDeleteUser(id string) error {
 	return nil
 }
 
-func GetApidetails() ([]map[string]string, error) {
-	var db, errdb = Conf.Connectdb()
-	id := ("id")
+func GetApiDetails(id string) (map[string]string, error) {
+	var db, errdb = config.Connectdb()
 
-	var regs []map[string]string
+	var reg map[string]string
 
 	if errdb != nil {
-		return regs, errdb
+		return reg, errdb
 	}
 
 	defer db.Close()
 
-	rows, err := db.Query("SELECT * FROM abhic.abhic_api_registration WHERE id=?;", id)
+	var headers, url, method, request, response sql.NullString
 
-	if err != nil {
-		return regs, err
+	row := db.QueryRow("SELECT headers, url, method, request, response FROM abhic.abhic_api_registration WHERE id=?;", id)
+	err := row.Scan(&headers, &url, &method, &request, &response)
+
+	reg = map[string]string{
+		"headers":  headers.String,
+		"url":      url.String,
+		"method":   method.String,
+		"request":  request.String,
+		"response": response.String,
 	}
 
-	for rows.Next() {
-		var headers, url, method, request, response string
-		rows.Scan(&headers, &url, &method, &request, &response)
-
-		reg := map[string]string{
-			"headers":  headers,
-			"url":      url,
-			"method":   method,
-			"request":  request,
-			"response": response,
-		}
-
-		regs = newFunction(regs, reg)
+	switch {
+	case err == sql.ErrNoRows:
+		return reg, err
+	case err != nil:
+		return reg, err
+	default:
+		return reg, nil
 	}
-
-	defer rows.Close()
-
-	return regs, err
-}
-func newFunction(regs []map[string]string, reg map[string]string) []map[string]string {
-	regs = newFunction(regs, reg)
-	return regs
-}
-
-func Param(s string) {
-	panic("unimplemented")
 }

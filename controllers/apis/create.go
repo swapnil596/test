@@ -3,7 +3,6 @@ package apis
 import (
 	"api-registration-backend/common"
 	"api-registration-backend/models"
-	modeluser "api-registration-backend/models"
 	"api-registration-backend/validations"
 	"log"
 	"net/http"
@@ -12,7 +11,7 @@ import (
 )
 
 func Construct(ctx *gin.Context) {
-	var regs modeluser.ShowUser
+	var regs models.ApiRegistration
 
 	// validating request data
 	if err := ctx.BindJSON(&regs); err != nil {

@@ -13,7 +13,7 @@ import (
 func Terminate(c *gin.Context) {
 	uid := c.Params.ByName("id")
 
-	err := models.DeleteUser(uid)
+	err := models.DeleteApi(uid)
 
 	if err != nil {
 		common.FailResponse(c, http.StatusInternalServerError, "Error",

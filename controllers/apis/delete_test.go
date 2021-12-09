@@ -3,7 +3,6 @@ package apis
 import (
 	"api-registration-backend/common"
 	"api-registration-backend/models"
-	modeluser "api-registration-backend/models"
 	"fmt"
 
 	"net/http"
@@ -18,14 +17,14 @@ func TestDeleteUser(test *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	// set dummy record for testing
-	var ResultUser modeluser.ShowUser
+	var ResultUser models.ApiRegistration
 
 	ResultUser.Name = "NamrataDelete"
 	ResultUser.Version = "V2"
 	ResultUser.Protocol = "P2"
 	ResultUser.Degree = 0
-	ResultUser.Project_id = 101
-	ResultUser.Created_by = "A2"
+	ResultUser.ProjectId = 101
+	ResultUser.CreatedBy = "A2"
 
 	id, err := models.CreateApi(ResultUser)
 
@@ -45,7 +44,7 @@ func TestDeleteUser(test *testing.T) {
 		statusOK := w.Code == http.StatusOK
 
 		// clean up code
-		_ = models.PermaDeleteUser(id)
+		_ = models.PermaDeleteApi(id)
 
 		return statusOK
 	})
