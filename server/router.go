@@ -82,11 +82,11 @@ func NewRouter() *gin.Engine {
 	APIGroup := router.Group("/api/v1")
 	{
 		//v1.GET("/tesconnect", connect.Tesconnect)
-		APIGroup.GET("/getallapis", apis.ListConstruct)
-		APIGroup.DELETE("/deleteapi/:id", apis.Terminate)
-		APIGroup.POST("/copyapi/:id", apis.CloneConstruct)
-		APIGroup.POST("/registration/api", apis.Construct)
-		APIGroup.PUT("/updateapi/:id", apis.Overhaul)
+		APIGroup.GET("/registration/apis", apis.ListConstruct)
+		APIGroup.DELETE("/registration/api/:id", apis.Terminate)
+		APIGroup.POST("/registration/api/:id", apis.CloneConstruct)
+		APIGroup.POST("/registration/api/api", apis.Construct)
+		APIGroup.PUT("/registration/api/:id", apis.Overhaul)
 		APIGroup.GET("/registration/api/:id", apis.GetDetails)
 	}
 
