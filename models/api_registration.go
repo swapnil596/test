@@ -12,9 +12,9 @@ type (
 		Method       sql.NullString `json:"method" form:"method"`
 		Protocol     string         `json:"protocol" form:"protocol"`
 		Headers      sql.NullString `json:"headersy" form:"headers"`
-		Request      sql.NullString `json:"request" form:"request"`
-		Response     sql.NullString `json:"response" form:"response"`
-		QueryParams  sql.NullString `json:"query_params" form:"query_params"`
+		Request      sql.NullString `json:"request" form:"requestBody"`
+		Response     sql.NullString `json:"response" form:"responseBody"`
+		QueryParams  sql.NullString `json:"query_params" form:"queryParameter"`
 		StatusCode   sql.NullInt64  `json:"status_code" form:"status_code"`
 		Degree       int            `json:"degree" form:"degree"`
 		CreatedBy    string         `json:"created_by" form:"created_by"`
@@ -22,6 +22,6 @@ type (
 		ModifiedBy   sql.NullString `json:"modified_by" form:"modified_by"`
 		ModifiedDate sql.NullString `json:"modified_date" form:"modified_date"`
 		Active       bool           `json:"active" form:"active"`
-		RateLimit    int            `json:"rate_limit" form:"rate_limit"`
+		RateLimit    sql.NullInt64  `json:"rate_limit" form:"rate_limit"`
 	}
 )

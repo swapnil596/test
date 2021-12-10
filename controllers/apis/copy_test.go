@@ -33,9 +33,9 @@ func TestCloneUser(test *testing.T) {
 	}
 
 	router := gin.Default()
-	endpoint := fmt.Sprintf("/api/v1/cloneuser/%s", id)
+	endpoint := fmt.Sprintf("/api/v1/copyapi/%s", id)
 
-	router.POST("/api/v1/cloneuser/:id", CloneConstruct)
+	router.POST("/api/v1/copyapi/:id", CloneConstruct)
 
 	req, _ := http.NewRequest(http.MethodPost, endpoint, nil)
 
@@ -55,9 +55,9 @@ func TestCloneUserInvalidId(test *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	router := gin.Default()
-	endpoint := fmt.Sprintf("/api/v1/cloneuser/%s", "invalid-id")
+	endpoint := fmt.Sprintf("/api/v1/copyapi/%s", "invalid-id")
 
-	router.POST("/api/v1/cloneuser/:id", CloneConstruct)
+	router.POST("/api/v1/copyapi/:id", CloneConstruct)
 
 	req, _ := http.NewRequest(http.MethodPost, endpoint, nil)
 
