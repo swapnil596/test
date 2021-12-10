@@ -31,6 +31,20 @@ func NewRouter() *gin.Engine {
 	// Recovery middleware recovers from any panics and writes a 500 if there is one.
 	router.Use(gin.Recovery())
 
+	// For CORS
+	router.Use(func(ctx *gin.Context) {
+		ctx.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		ctx.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		ctx.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, ResponseType, accept, origin, Cache-Control, X-Requested-With, access-control-allow-origin")
+		ctx.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE, COPY")
+
+		if ctx.Request.Method == "OPTIONS" {
+			ctx.AbortWithStatus(204)
+			return
+		}
+		ctx.Next()
+	})
+
 	router.HandleMethodNotAllowed = true
 
 	// Handle error response when the route is not defined
@@ -68,11 +82,11 @@ func NewRouter() *gin.Engine {
 	APIGroup := router.Group("/api/v1")
 	{
 		//v1.GET("/tesconnect", connect.Tesconnect)
-		APIGroup.GET("/getallusers", apis.ListConstruct)
-		APIGroup.DELETE("/deleteuser/:id", apis.Terminate)
-		APIGroup.Handle("COPY", "/cloneuser/:id", apis.CloneConstruct)
+		APIGroup.GET("/getallapis", apis.ListConstruct)
+		APIGroup.DELETE("/deleteapi/:id", apis.Terminate)
+		APIGroup.POST("/copyapi/:id", apis.CloneConstruct)
 		APIGroup.POST("/registration/api", apis.Construct)
-		APIGroup.PUT("/updateuser/:id", apis.Overhaul)
+		APIGroup.PUT("/updateapi/:id", apis.Overhaul)
 		APIGroup.GET("/registration/api/:id", apis.GetDetails)
 	}
 

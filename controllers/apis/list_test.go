@@ -16,12 +16,12 @@ func TestListAllUsers(t *testing.T) {
 	// Setup your router, just like you did in your main function, and
 	// register your routes
 	r := gin.Default()
-	r.GET("/getallusers", ListConstruct)
+	r.GET("/getallapis", ListConstruct)
 
 	// Create the mock request you'd like to test. Make sure the second argument
 	// here is the same as one of the routes you defined in the router setup
 	// block!
-	req, err := http.NewRequest(http.MethodGet, "/getallusers", nil)
+	req, err := http.NewRequest(http.MethodGet, "/getallapis", nil)
 	if err != nil {
 		t.Fatalf("Couldn't create request: %v\n", err)
 	}
@@ -43,7 +43,7 @@ func TestListAllUsersWrongMethod(test *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	router := gin.Default()
-	endpoint := "/api/v1/getallusers"
+	endpoint := "/api/v1/getallapis"
 
 	router.GET(endpoint, ListConstruct)
 

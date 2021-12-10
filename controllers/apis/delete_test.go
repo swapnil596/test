@@ -33,9 +33,9 @@ func TestDeleteUser(test *testing.T) {
 	}
 
 	router := gin.Default()
-	endpoint := fmt.Sprintf("/api/v1/deleteuser/%s", id)
+	endpoint := fmt.Sprintf("/api/v1/deleteapi/%s", id)
 
-	router.DELETE("/api/v1/deleteuser/:id", Terminate)
+	router.DELETE("/api/v1/deleteapi/:id", Terminate)
 
 	req, _ := http.NewRequest(http.MethodDelete, endpoint, nil)
 
@@ -55,9 +55,9 @@ func TestDeleteUserInvalidId(test *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	router := gin.Default()
-	endpoint := fmt.Sprintf("/api/v1/deleteuser/%s", "invalid-id")
+	endpoint := fmt.Sprintf("/api/v1/deleteapi/%s", "invalid-id")
 
-	router.DELETE("/api/v1/deleteuser/:id", Terminate)
+	router.DELETE("/api/v1/deleteapi/:id", Terminate)
 
 	req, _ := http.NewRequest(http.MethodDelete, endpoint, nil)
 
