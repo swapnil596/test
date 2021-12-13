@@ -16,7 +16,7 @@ func TestListAllUsers(t *testing.T) {
 	// Setup your router, just like you did in your main function, and
 	// register your routes
 	r := gin.Default()
-	r.GET("/getallapis", ListConstruct)
+	r.GET("/registration/apis", ListConstruct)
 
 	// Create the mock request you'd like to test. Make sure the second argument
 	// here is the same as one of the routes you defined in the router setup

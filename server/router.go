@@ -85,7 +85,7 @@ func NewRouter() *gin.Engine {
 		APIGroup.GET("/registration/apis", apis.ListConstruct)
 		APIGroup.DELETE("/registration/api/:id", apis.Terminate)
 		APIGroup.POST("/registration/api/:id", apis.CloneConstruct)
-		APIGroup.POST("/registration/api/api", apis.Construct)
+		APIGroup.POST("/registration/api", apis.Construct)
 		APIGroup.PUT("/registration/api/:id", apis.Overhaul)
 		APIGroup.GET("/registration/api/:id", apis.GetDetails)
 	}
