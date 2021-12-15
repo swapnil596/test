@@ -33,7 +33,7 @@ func NewRouter() *gin.Engine {
 
 	// For CORS
 	router.Use(func(ctx *gin.Context) {
-		ctx.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		ctx.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 		ctx.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		ctx.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, ResponseType, accept, origin, Cache-Control, X-Requested-With, access-control-allow-origin")
 		ctx.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE, COPY")
@@ -88,6 +88,7 @@ func NewRouter() *gin.Engine {
 		APIGroup.POST("/registration/api", apis.Construct)
 		APIGroup.PUT("/registration/api/:id", apis.Overhaul)
 		APIGroup.GET("/registration/api/:id", apis.GetDetails)
+		APIGroup.PUT("/registration/api/update_name/:id", apis.UpdateName)
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

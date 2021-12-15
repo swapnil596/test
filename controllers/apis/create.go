@@ -4,7 +4,6 @@ import (
 	"api-registration-backend/common"
 	"api-registration-backend/models"
 	"api-registration-backend/validations"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +14,6 @@ func Construct(ctx *gin.Context) {
 
 	// validating request data
 	if err := ctx.BindJSON(&regs); err != nil {
-		log.Printf(err.Error())
 		common.FailResponse(ctx, http.StatusBadRequest, "Error",
 			gin.H{"errors": validations.ValidateErrors(err)})
 		return

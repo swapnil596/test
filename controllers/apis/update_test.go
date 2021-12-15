@@ -35,7 +35,7 @@ func TestUpdateUserEndpoint(test *testing.T) {
 
 	router.PUT("/api/v1/registration/api/:id", Overhaul)
 
-	var jsonStr = []byte(`{"name": "Chat Box","data":{"anotherkey":"anothervalue"}}`)
+	var jsonStr = []byte(`{"data":{"anotherkey":"anothervalue"}}`)
 	req, _ := http.NewRequest(http.MethodPut, endpoint, bytes.NewBuffer(jsonStr))
 
 	common.TestHTTPResponse(test, router, req, func(w *httptest.ResponseRecorder) bool {
@@ -75,7 +75,7 @@ func TestUpdateUserInvalidJson(test *testing.T) {
 
 	router.PUT("/api/v1/registration/api/:id", Overhaul)
 
-	var jsonStr = []byte(`{"name":{}, "url":"U1", "method":"m1", "headers":"h1", "request":"r1", "response":"r1", "query_params":"q1", "status_code":200}`)
+	var jsonStr = []byte(`{"url":"U1", "method":"m1", "headers":"h1", "request":"r1", "response":"r1", "query_params":"q1", "status_code":200}`)
 	req, _ := http.NewRequest(http.MethodPut, endpoint, bytes.NewBuffer(jsonStr))
 
 	common.TestHTTPResponse(test, router, req, func(w *httptest.ResponseRecorder) bool {
@@ -111,6 +111,7 @@ func TestUpdateUserInvalidDegree(test *testing.T) {
 	}
 
 	router := gin.Default()
+	//log.Fatal("id", id)
 	endpoint := fmt.Sprintf("/api/v1/registration/api/%s?degree=invalid", id)
 
 	router.PUT("/api/v1/registration/api/:id", Overhaul)
