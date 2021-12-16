@@ -87,8 +87,8 @@ func NewRouter() *gin.Engine {
 		APIGroup.POST("/registration/api/:id", apis.CloneConstruct)
 		APIGroup.POST("/registration/api", apis.Construct)
 		APIGroup.PUT("/registration/api/:id", apis.Overhaul)
+		APIGroup.PUT("/registration/api/name/:id", apis.OverhaulName)
 		APIGroup.GET("/registration/api/:id", apis.GetDetails)
-		APIGroup.PUT("/registration/api/update_name/:id", apis.UpdateName)
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

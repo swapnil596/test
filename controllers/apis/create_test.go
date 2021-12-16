@@ -28,7 +28,7 @@ func TestCreateApiEndpoint(test *testing.T) {
 		// Check the status code is what we expect.
 		statusOK := w.Code == http.StatusOK
 
-		// // clean up code: delete the form created by the above code
+		// // clean up code: delete the api created by the above code
 		var db, _ = config.Connectdb()
 		defer db.Close()
 

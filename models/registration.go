@@ -214,9 +214,8 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 	return nil
 }
 
-func UpdateName(updateapi ApiRegistration, id string, name string) error {
+func UpdateName(id string, name string) error {
 	var db, errdb = config.Connectdb()
-
 	if errdb != nil {
 		return errdb
 	}
@@ -231,7 +230,7 @@ func UpdateName(updateapi ApiRegistration, id string, name string) error {
 	defer stmt.Close()
 
 	currentTime := time.Now()
-	_, err = stmt.Exec(updateapi.Name, "", currentTime.Format("2006-01-02"), id)
+	_, err = stmt.Exec(name, "", currentTime.Format("2006-01-02"), id)
 
 	if err != nil {
 		return err
