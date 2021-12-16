@@ -205,10 +205,19 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 	if err != nil {
 		return err
 	}
-	_, err = azure.DeleteBlobData(old_headers_url.String)
-	_, err = azure.DeleteBlobData(old_request_url.String)
-	_, err = azure.DeleteBlobData(old_response_url.String)
-	_, err = azure.DeleteBlobData(old_query_params_url.String)
+
+	if old_headers_url.Valid {
+		_, err = azure.DeleteBlobData(old_headers_url.String)
+	}
+	if old_request_url.Valid {
+		_, err = azure.DeleteBlobData(old_request_url.String)
+	}
+	if old_response_url.Valid {
+		_, err = azure.DeleteBlobData(old_response_url.String)
+	}
+	if old_query_params_url.Valid {
+		_, err = azure.DeleteBlobData(old_query_params_url.String)
+	}
 
 	// create new entries into azure
 	headers_link, err := azure.UploadBytesToBlob([]byte(updateapi.Headers.String))
@@ -314,12 +323,33 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 	err := row.Scan(&id, &name, &headers, &url, &method, &request, &response, &query_params)
 
 	data_json["name"] = name
-	data_json["headers"], err = azure.GetBlobData(headers.String)
+
+	if !headers.Valid {
+		data_json["headers"] = ""
+	} else {
+		data_json["headers"], err = azure.GetBlobData(headers.String)
+	}
+
 	data_json["url"] = url.String
 	data_json["method"] = method.String
-	data_json["request"], err = azure.GetBlobData(request.String)
-	data_json["response"], err = azure.GetBlobData(response.String)
-	data_json["query_params"], err = azure.GetBlobData(query_params.String)
+
+	if !request.Valid {
+		data_json["request"] = ""
+	} else {
+		data_json["request"], err = azure.GetBlobData(request.String)
+	}
+
+	if !response.Valid {
+		data_json["response"] = ""
+	} else {
+		data_json["response"], err = azure.GetBlobData(response.String)
+	}
+
+	if !query_params.Valid {
+		data_json["query_params"] = ""
+	} else {
+		data_json["query_params"], err = azure.GetBlobData(query_params.String)
+	}
 
 	var headers_json map[string]interface{}
 	json.Unmarshal([]byte(data_json["headers"]), &headers_json)
