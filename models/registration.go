@@ -180,6 +180,7 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 
 	if degree != "" {
 		if _, err := strconv.Atoi(degree); err != nil {
+			return err
 		}
 
 		stmt, err := db.Prepare("UPDATE abhic.abhic_api_registration SET degree=? WHERE id=?;")
@@ -196,7 +197,7 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 		return nil
 	}
 
-	stmt, err := db.Prepare("UPDATE abhic.abhic_api_registration SET name=?, rate_limit=?, url=?, method=?, headers=?, request=?, response=?, query_params=?, modified_by=?, modified_date=? WHERE id=?;")
+	stmt, err := db.Prepare("UPDATE abhic.abhic_api_registration SET rate_limit=?, url=?, method=?, headers=?, request=?, response=?, query_params=?, modified_by=?, modified_date=? WHERE id=?;")
 
 	if err != nil {
 		return err
@@ -204,7 +205,32 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 	defer stmt.Close()
 
 	currentTime := time.Now()
-	_, err = stmt.Exec(updateapi.Name, updateapi.RateLimit, updateapi.Url, updateapi.Method, updateapi.Headers, updateapi.Request, updateapi.Response, updateapi.QueryParams, "", currentTime.Format("2006-01-02"), id)
+	_, err = stmt.Exec(updateapi.RateLimit, updateapi.Url, updateapi.Method, updateapi.Headers, updateapi.Request, updateapi.Response, updateapi.QueryParams, "", currentTime.Format("2006-01-02"), id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func UpdateName(id string, name string) error {
+	var db, errdb = config.Connectdb()
+	if errdb != nil {
+		return errdb
+	}
+
+	defer db.Close()
+
+	stmt, err := db.Prepare("UPDATE abhic.abhic_api_registration SET name=?, modified_by=?, modified_date=? WHERE id=?;")
+
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	currentTime := time.Now()
+	_, err = stmt.Exec(name, "", currentTime.Format("2006-01-02"), id)
 
 	if err != nil {
 		return err
