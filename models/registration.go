@@ -1,6 +1,7 @@
 package models
 
 import (
+	"api-registration-backend/azure"
 	"api-registration-backend/config"
 	"database/sql"
 	"encoding/json"
@@ -197,6 +198,24 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 		return nil
 	}
 
+	// delete old entries from azure
+	var old_headers_url, old_request_url, old_response_url, old_query_params_url sql.NullString
+	row := db.QueryRow("SELECT headers, request, response, query_params FROM abhic.abhic_api_registration WHERE id=?", id)
+	err := row.Scan(&old_headers_url, &old_request_url, &old_response_url, &old_query_params_url)
+	if err != nil {
+		return err
+	}
+	_, err = azure.DeleteBlobData(old_headers_url.String)
+	_, err = azure.DeleteBlobData(old_request_url.String)
+	_, err = azure.DeleteBlobData(old_response_url.String)
+	_, err = azure.DeleteBlobData(old_query_params_url.String)
+
+	// create new entries into azure
+	headers_link, err := azure.UploadBytesToBlob([]byte(updateapi.Headers.String))
+	request_link, err := azure.UploadBytesToBlob([]byte(updateapi.Request.String))
+	response_link, err := azure.UploadBytesToBlob([]byte(updateapi.Response.String))
+	query_params_link, err := azure.UploadBytesToBlob([]byte(updateapi.QueryParams.String))
+
 	stmt, err := db.Prepare("UPDATE abhic.abhic_api_registration SET rate_limit=?, url=?, method=?, headers=?, request=?, response=?, query_params=?, modified_by=?, modified_date=? WHERE id=?;")
 
 	if err != nil {
@@ -205,7 +224,7 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 	defer stmt.Close()
 
 	currentTime := time.Now()
-	_, err = stmt.Exec(updateapi.RateLimit, updateapi.Url, updateapi.Method, updateapi.Headers, updateapi.Request, updateapi.Response, updateapi.QueryParams, "", currentTime.Format("2006-01-02"), id)
+	_, err = stmt.Exec(updateapi.RateLimit, updateapi.Url, updateapi.Method, headers_link, request_link, response_link, query_params_link, "", currentTime.Format("2006-01-02"), id)
 
 	if err != nil {
 		return err
@@ -284,21 +303,35 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 
 	var headers, url, method, request, response, query_params sql.NullString
 	var name string
+	data_json := make(map[string]string)
+
+	if errdb != nil {
+		return reg, errdb
+	}
+	defer db.Close()
 
 	row := db.QueryRow("SELECT id, name, headers, url, method, request, response, query_params FROM abhic.abhic_api_registration WHERE id=?;", id)
 	err := row.Scan(&id, &name, &headers, &url, &method, &request, &response, &query_params)
 
+	data_json["name"] = name
+	data_json["headers"], err = azure.GetBlobData(headers.String)
+	data_json["url"] = url.String
+	data_json["method"] = method.String
+	data_json["request"], err = azure.GetBlobData(request.String)
+	data_json["response"], err = azure.GetBlobData(response.String)
+	data_json["query_params"], err = azure.GetBlobData(query_params.String)
+
 	var headers_json map[string]interface{}
-	json.Unmarshal([]byte(headers.String), &headers_json)
+	json.Unmarshal([]byte(data_json["headers"]), &headers_json)
 
 	var request_json map[string]interface{}
-	json.Unmarshal([]byte(request.String), &request_json)
+	json.Unmarshal([]byte(data_json["request"]), &request_json)
 
 	var response_json map[string]interface{}
-	json.Unmarshal([]byte(response.String), &response_json)
+	json.Unmarshal([]byte(data_json["response"]), &response_json)
 
 	var query_param_json map[string]interface{}
-	json.Unmarshal([]byte(query_params.String), &query_param_json)
+	json.Unmarshal([]byte(data_json["query_params"]), &query_param_json)
 
 	reg = map[string]interface{}{
 		"id":             id,

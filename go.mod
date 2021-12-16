@@ -3,9 +3,10 @@ module api-registration-backend
 go 1.14
 
 require (
+	github.com/Azure/azure-storage-blob-go v0.14.0
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
 	github.com/aws/aws-sdk-go v1.38.20
-	github.com/gin-gonic/gin v1.7.1
+	github.com/gin-gonic/gin v1.7.7
 	github.com/go-openapi/spec v0.20.3 // indirect
 	github.com/go-openapi/swag v0.19.15 // indirect
 	github.com/go-playground/validator/v10 v10.4.1
