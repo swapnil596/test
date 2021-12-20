@@ -5,7 +5,7 @@ import "database/sql"
 type (
 	ApiRegistration struct {
 		Id           string         `json:"id"`
-		ProjectId    int            `json:"project_id"`
+		ProjectId    string         `json:"project_id"`
 		Name         string         `json:"name" form:"name"`
 		Version      string         `json:"version" form:"version"`
 		Url          sql.NullString `json:"url" form:"url"`

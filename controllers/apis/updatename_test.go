@@ -22,7 +22,7 @@ func TestUpdateNameEndpoint(test *testing.T) {
 	ResultUser.Version = "V2"
 	ResultUser.Protocol = "P2"
 	ResultUser.Degree = 0
-	ResultUser.ProjectId = 101
+	ResultUser.ProjectId = "101"
 	ResultUser.CreatedBy = "A2"
 
 	id, err := models.CreateApi(ResultUser)
