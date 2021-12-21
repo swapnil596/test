@@ -20,7 +20,7 @@ func TestCloneUser(test *testing.T) {
 	var ResultUser models.ApiRegistration
 
 	ResultUser.Name = "NamrataCopy"
-	ResultUser.ProjectId = 101
+	ResultUser.ProjectId = "101"
 	ResultUser.Version = "V2"
 	ResultUser.Protocol = "P2"
 	ResultUser.CreatedBy = "A2"

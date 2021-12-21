@@ -17,7 +17,7 @@ func Overhaul(ctx *gin.Context) {
 
 	type TempApi struct {
 		Id           string                 `json:"id" form:"id"`
-		ProjectId    int                    `json:"project_id" form:"project_id"`
+		ProjectId    string                 `json:"project_id" form:"project_id"`
 		Name         string                 `json:"name" form:"name"`
 		Version      string                 `json:"version" form:"version"`
 		Url          string                 `json:"url" form:"url"`
@@ -48,7 +48,7 @@ func Overhaul(ctx *gin.Context) {
 	}
 
 	var updateapi models.ApiRegistration
-	updateapi.Name = tempAPI.Name
+	//updateapi.Name = tempAPI.Name
 	updateapi.Url = sql.NullString{String: tempAPI.Url, Valid: true}
 	updateapi.Method = sql.NullString{String: tempAPI.Method, Valid: true}
 
