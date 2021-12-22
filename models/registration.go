@@ -23,20 +23,20 @@ func ListAllApis(enable string, disable string, draft string, page_s string) ([]
 	}
 	defer db.Close()
 
-	query := fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM abhic.abhic_api_registration WHERE active=1 ORDER BY created_date DESC;")
+	query := fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 ORDER BY created_date DESC;")
 
 	if enable != "" && disable == "" && draft == "" {
-		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM abhic.abhic_api_registration WHERE active=1 AND degree=1 ORDER BY created_date DESC;")
+		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=1 ORDER BY created_date DESC;")
 	} else if enable == "" && disable != "" && draft == "" {
-		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM abhic.abhic_api_registration WHERE active=1 AND degree=0 ORDER BY created_date DESC;")
+		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=0 ORDER BY created_date DESC;")
 	} else if enable == "" && disable == "" && draft != "" {
-		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM abhic.abhic_api_registration WHERE active=1 AND degree=2 ORDER BY created_date DESC;")
+		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=2 ORDER BY created_date DESC;")
 	} else if enable != "" && disable != "" && draft == "" {
-		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM abhic.abhic_api_registration WHERE active=1 AND degree<>2 ORDER BY created_date DESC;")
+		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>2 ORDER BY created_date DESC;")
 	} else if enable == "" && disable != "" && draft != "" {
-		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM abhic.abhic_api_registration WHERE active=1 AND degree<>1 ORDER BY created_date DESC;")
+		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>1 ORDER BY created_date DESC;")
 	} else if enable != "" && disable == "" && draft != "" {
-		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM abhic.abhic_api_registration WHERE active=1 AND degree<>0 ORDER BY created_date DESC;")
+		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>0 ORDER BY created_date DESC;")
 	}
 
 	if page_s != "" {
@@ -46,20 +46,20 @@ func ListAllApis(enable string, disable string, draft string, page_s string) ([]
 		}
 
 		page = page * 10
-		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM abhic.abhic_api_registration WHERE active=1 ORDER BY created_date DESC LIMIT %v, 10;", page)
+		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 ORDER BY created_date DESC LIMIT %v, 10;", page)
 
 		if enable != "" && disable == "" && draft == "" {
-			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM abhic.abhic_api_registration WHERE active=1 AND degree=1 ORDER BY created_date DESC LIMIT %v, 10;", page)
+			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=1 ORDER BY created_date DESC LIMIT %v, 10;", page)
 		} else if enable != "" && disable == "" && draft == "" {
-			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM abhic.abhic_api_registration WHERE active=1 AND degree=0 ORDER BY created_date DESC LIMIT %v, 10;", page)
+			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=0 ORDER BY created_date DESC LIMIT %v, 10;", page)
 		} else if enable == "" && disable == "" && draft != "" {
-			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM abhic.abhic_api_registration WHERE active=1 AND degree=2 ORDER BY created_date DESC LIMIT %v, 10;", page)
+			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=2 ORDER BY created_date DESC LIMIT %v, 10;", page)
 		} else if enable != "" && disable != "" && draft == "" {
-			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM abhic.abhic_api_registration WHERE active=1 AND degree<>2 ORDER BY created_date DESC LIMIT %v, 10;", page)
+			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>2 ORDER BY created_date DESC LIMIT %v, 10;", page)
 		} else if enable == "" && disable != "" && draft != "" {
-			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM abhic.abhic_api_registration WHERE active=1 AND degree<>1 ORDER BY created_date DESC LIMIT %v, 10;", page)
+			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>1 ORDER BY created_date DESC LIMIT %v, 10;", page)
 		} else if enable != "" && disable == "" && draft != "" {
-			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM abhic.abhic_api_registration WHERE active=1 AND degree<>0 ORDER BY created_date DESC LIMIT %v, 10;", page)
+			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>0 ORDER BY created_date DESC LIMIT %v, 10;", page)
 		}
 	}
 
@@ -96,7 +96,7 @@ func DeleteApi(id string) error {
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("UPDATE abhic.abhic_api_registration SET active=0 WHERE id=?;")
+	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET active=0 WHERE id=?;")
 
 	if err != nil {
 		return err
@@ -127,13 +127,13 @@ func CopyApi(newuser ApiRegistration, id string) (error, ApiRegistration) {
 	}
 	defer db.Close()
 
-	row := db.QueryRow("Select * FROM abhic.abhic_api_registration Where id=?", id)
+	row := db.QueryRow("Select * FROM db_flowxpert.abhic_api_registration Where id=?", id)
 	err := row.Scan(&newuser.Id, &newuser.ProjectId, &newuser.Name, &newuser.Version, &newuser.RateLimit, &newuser.Url, &newuser.Method, &newuser.Protocol, &newuser.Headers, &newuser.Request, &newuser.Response, &newuser.QueryParams, &newuser.Degree, &newuser.CreatedBy, &newuser.CreatedDate, &newuser.ModifiedBy, &newuser.ModifiedDate, &newuser.Active)
 	if err != nil {
 		return err, newuser
 	}
 
-	stmt, err := db.Prepare("INSERT INTO abhic.abhic_api_registration (id,project_id,name,version,rate_limit,url,method, protocol,headers,request,response,query_params,degree,created_by, created_date, modified_by, modified_date,active) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+	stmt, err := db.Prepare("INSERT INTO db_flowxpert.abhic_api_registration (id,project_id,name,version,rate_limit,url,method, protocol,headers,request,response,query_params,degree,created_by, created_date, modified_by, modified_date,active) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
 	defer stmt.Close()
 
 	if err != nil {
@@ -156,7 +156,7 @@ func CreateApi(regs ApiRegistration) (string, error) {
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("INSERT INTO abhic.abhic_api_registration (id, name, project_id, version, protocol, created_by, degree) VALUES (?, ?, ?, ?, ?, ?, ?);")
+	stmt, err := db.Prepare("INSERT INTO db_flowxpert.abhic_api_registration (id, name, project_id, version, protocol, created_by, degree) VALUES (?, ?, ?, ?, ?, ?, ?);")
 	if err != nil {
 		return uuid.String(), err
 	}
@@ -184,7 +184,7 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 			return err
 		}
 
-		stmt, err := db.Prepare("UPDATE abhic.abhic_api_registration SET degree=? WHERE id=?;")
+		stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET degree=? WHERE id=?;")
 		if err != nil {
 			return err
 		}
@@ -200,7 +200,7 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 
 	// delete old entries from azure
 	var old_headers_url, old_request_url, old_response_url, old_query_params_url sql.NullString
-	row := db.QueryRow("SELECT headers, request, response, query_params FROM abhic.abhic_api_registration WHERE id=?", id)
+	row := db.QueryRow("SELECT headers, request, response, query_params FROM db_flowxpert.abhic_api_registration WHERE id=?", id)
 	err := row.Scan(&old_headers_url, &old_request_url, &old_response_url, &old_query_params_url)
 	if err != nil {
 		return err
@@ -225,7 +225,7 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 	response_link, err := azure.UploadBytesToBlob([]byte(updateapi.Response.String))
 	query_params_link, err := azure.UploadBytesToBlob([]byte(updateapi.QueryParams.String))
 
-	stmt, err := db.Prepare("UPDATE abhic.abhic_api_registration SET rate_limit=?, url=?, method=?, headers=?, request=?, response=?, query_params=?, modified_by=?, modified_date=? WHERE id=?;")
+	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET rate_limit=?, url=?, method=?, headers=?, request=?, response=?, query_params=?, modified_by=?, modified_date=? WHERE id=?;")
 
 	if err != nil {
 		return err
@@ -250,7 +250,7 @@ func UpdateName(id string, name string) error {
 
 	defer db.Close()
 
-	stmt, err := db.Prepare("UPDATE abhic.abhic_api_registration SET name=?, modified_by=?, modified_date=? WHERE id=?;")
+	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET name=?, modified_by=?, modified_date=? WHERE id=?;")
 
 	if err != nil {
 		return err
@@ -276,7 +276,7 @@ func PermaDeleteApi(id string) error {
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("DELETE FROM abhic.abhic_api_registration WHERE id=?;")
+	stmt, err := db.Prepare("DELETE FROM db_flowxpert.abhic_api_registration WHERE id=?;")
 
 	if err != nil {
 		return err
@@ -319,7 +319,7 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 	}
 	defer db.Close()
 
-	row := db.QueryRow("SELECT id, name, headers, url, method, request, response, query_params FROM abhic.abhic_api_registration WHERE id=?;", id)
+	row := db.QueryRow("SELECT id, name, headers, url, method, request, response, query_params FROM db_flowxpert.abhic_api_registration WHERE id=?;", id)
 	err := row.Scan(&id, &name, &headers, &url, &method, &request, &response, &query_params)
 
 	data_json["name"] = name

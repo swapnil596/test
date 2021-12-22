@@ -32,7 +32,7 @@ func TestCreateApiEndpoint(test *testing.T) {
 		var db, _ = config.Connectdb()
 		defer db.Close()
 
-		row := db.QueryRow("select id from abhic.abhic_api_registration ORDER BY created_date DESC LIMIT 1;")
+		row := db.QueryRow("select id from db_flowxpert.abhic_api_registration ORDER BY created_date DESC LIMIT 1;")
 
 		var id string
 		err := row.Scan(&id)
