@@ -31,7 +31,7 @@ func main() {
 	//aws.Init()
 
 	// set environment moe
-	gin.SetMode(gin.DebugMode)
+	gin.SetMode(gin.ReleaseMode)
 
 	router := server.NewRouter()
 

@@ -1,6 +1,6 @@
 server:
   ip: "0.0.0.0"
-  port: ":8083"
+  port: ":8082"
 
 aws:
   region: "ap-south-1"
