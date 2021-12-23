@@ -23,20 +23,20 @@ func ListAllApis(enable string, disable string, draft string, page_s string) ([]
 	}
 	defer db.Close()
 
-	query := fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 ORDER BY created_date DESC;")
+	query := fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol,method FROM db_flowxpert.abhic_api_registration WHERE active=1 ORDER BY created_date DESC;")
 
 	if enable != "" && disable == "" && draft == "" {
-		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=1 ORDER BY created_date DESC;")
+		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol,method FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=1 ORDER BY created_date DESC;")
 	} else if enable == "" && disable != "" && draft == "" {
-		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=0 ORDER BY created_date DESC;")
+		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol,method FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=0 ORDER BY created_date DESC;")
 	} else if enable == "" && disable == "" && draft != "" {
-		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=2 ORDER BY created_date DESC;")
+		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol,method FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=2 ORDER BY created_date DESC;")
 	} else if enable != "" && disable != "" && draft == "" {
-		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>2 ORDER BY created_date DESC;")
+		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol,method FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>2 ORDER BY created_date DESC;")
 	} else if enable == "" && disable != "" && draft != "" {
-		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>1 ORDER BY created_date DESC;")
+		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol,method FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>1 ORDER BY created_date DESC;")
 	} else if enable != "" && disable == "" && draft != "" {
-		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>0 ORDER BY created_date DESC;")
+		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol,method FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>0 ORDER BY created_date DESC;")
 	}
 
 	if page_s != "" {
@@ -46,20 +46,20 @@ func ListAllApis(enable string, disable string, draft string, page_s string) ([]
 		}
 
 		page = page * 10
-		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 ORDER BY created_date DESC LIMIT %v, 10;", page)
+		query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol,method FROM db_flowxpert.abhic_api_registration WHERE active=1 ORDER BY created_date DESC LIMIT %v, 10;", page)
 
 		if enable != "" && disable == "" && draft == "" {
-			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=1 ORDER BY created_date DESC LIMIT %v, 10;", page)
+			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol,method FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=1 ORDER BY created_date DESC LIMIT %v, 10;", page)
 		} else if enable != "" && disable == "" && draft == "" {
-			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=0 ORDER BY created_date DESC LIMIT %v, 10;", page)
+			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol,method FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=0 ORDER BY created_date DESC LIMIT %v, 10;", page)
 		} else if enable == "" && disable == "" && draft != "" {
-			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=2 ORDER BY created_date DESC LIMIT %v, 10;", page)
+			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol,method FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree=2 ORDER BY created_date DESC LIMIT %v, 10;", page)
 		} else if enable != "" && disable != "" && draft == "" {
-			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>2 ORDER BY created_date DESC LIMIT %v, 10;", page)
+			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol,method FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>2 ORDER BY created_date DESC LIMIT %v, 10;", page)
 		} else if enable == "" && disable != "" && draft != "" {
-			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>1 ORDER BY created_date DESC LIMIT %v, 10;", page)
+			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol,method FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>1 ORDER BY created_date DESC LIMIT %v, 10;", page)
 		} else if enable != "" && disable == "" && draft != "" {
-			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>0 ORDER BY created_date DESC LIMIT %v, 10;", page)
+			query = fmt.Sprintf("SELECT version,name,modified_by,degree,modified_date,id,protocol,method FROM db_flowxpert.abhic_api_registration WHERE active=1 AND degree<>0 ORDER BY created_date DESC LIMIT %v, 10;", page)
 		}
 	}
 
@@ -71,9 +71,9 @@ func ListAllApis(enable string, disable string, draft string, page_s string) ([]
 	for rows.Next() {
 		var version, name, id, protocol string
 		var degree int
-		var modified_by, modified_date sql.NullString
+		var modified_by, modified_date, method sql.NullString
 
-		rows.Scan(&version, &name, &modified_by, &degree, &modified_date, &id, &protocol)
+		rows.Scan(&version, &name, &modified_by, &degree, &modified_date, &id, &protocol, &method)
 		user := map[string]string{
 			"version":       version,
 			"name":          name,
@@ -82,6 +82,7 @@ func ListAllApis(enable string, disable string, draft string, page_s string) ([]
 			"degree":        fmt.Sprint(degree),
 			"id":            id,
 			"protocol":      protocol,
+			"method":        method.String,
 		}
 		users = append(users, user)
 	}

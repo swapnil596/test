@@ -35,7 +35,7 @@ func main() {
 
 	router := server.NewRouter()
 
-	// By default it serves on :8080 unless a
+	// By default it serves on :8083 unless a
 	// PORT environment variable was defined.
 	err := router.Run(settings.GetString("server.port"))
 
