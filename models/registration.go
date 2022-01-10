@@ -268,6 +268,31 @@ func UpdateName(id string, name string) error {
 	return nil
 }
 
+func UpdateTykUri(id string, tykuri string) error {
+	var db, errdb = config.Connectdb()
+	if errdb != nil {
+		return errdb
+	}
+
+	defer db.Close()
+
+	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET tykuri=?, modified_by=?, modified_date=? WHERE id=?;")
+
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	currentTime := time.Now()
+	_, err = stmt.Exec(tykuri, "", currentTime.Format("2006-01-02"), id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // This Delete Function is only used for Testing.
 func PermaDeleteApi(id string) error {
 	var db, errdb = config.Connectdb()

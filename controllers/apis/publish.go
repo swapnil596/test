@@ -2,6 +2,7 @@ package apis
 
 import (
 	"api-registration-backend/common"
+	"api-registration-backend/models"
 	"api-registration-backend/validations"
 	"bytes"
 	"database/sql"
@@ -27,6 +28,7 @@ func Publish(ctx *gin.Context) {
 		Request      map[string]interface{} `json:"requestBody" form:"requestBody"`
 		Response     map[string]interface{} `json:"responseBody" form:"responseBody"`
 		QueryParams  map[string]interface{} `json:"queryParameter" form:"queryParameter"`
+		TykUri       sql.NullString         `json:"tykuri"`
 		Degree       int                    `json:"degree" form:"degree"`
 		Active       bool                   `json:"active" form:"active"`
 		CreatedBy    string                 `json:"created_by" form:"created_by"`
@@ -49,8 +51,10 @@ func Publish(ctx *gin.Context) {
 	name := tempAPI.Name
 	apiId := tempAPI.Id
 
-	url := "http://localhost:8081/tyk/apis"
-	reloadUrl := "http://localhost:8081/tyk/reload"
+	// url := "http://localhost:8081/tyk/apis"
+	// reloadUrl := "http://localhost:8081/tyk/reload"
+	url := "http://20.115.117.26:8080/tyk/apis"
+	reloadUrl := "http://20.115.117.26:8080/tyk/reload"
 	tykAuthToken := "352d20ee67be67f6340b4c0605b044b7"
 
 	endpointSplit := strings.SplitN(endpoint, "/", 4)
@@ -227,6 +231,13 @@ func Publish(ctx *gin.Context) {
 	if resp.StatusCode != 200 {
 		common.FailResponse(ctx, http.StatusBadRequest, "Error",
 			gin.H{"errors": body})
+		return
+	}
+
+	err = models.UpdateTykUri(tempAPI.Id, listenPath)
+	if err != nil {
+		common.FailResponse(ctx, http.StatusBadRequest, "Error",
+			gin.H{"errors": validations.ValidateErrors(err)})
 		return
 	}
 

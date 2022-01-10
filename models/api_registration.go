@@ -16,6 +16,7 @@ type (
 		Response     sql.NullString `json:"responseBody" form:"responseBody"`
 		QueryParams  sql.NullString `json:"queryParameter" form:"queryParameter"`
 		StatusCode   sql.NullInt64  `json:"status_code" form:"status_code"`
+		TykUri       sql.NullString `json:"tykuri"`
 		Degree       int            `json:"degree" form:"degree"`
 		CreatedBy    string         `json:"created_by" form:"created_by"`
 		CreatedDate  string         `json:"created_date" form:"created_date"`
