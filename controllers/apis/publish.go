@@ -51,8 +51,9 @@ func Publish(ctx *gin.Context) {
 	name := tempAPI.Name
 	apiId := tempAPI.Id
 
-	// url := "http://localhost:8081/tyk/apis"
-	// reloadUrl := "http://localhost:8081/tyk/reload"
+	// url := "http://localhost:8080/tyk/apis"
+	// reloadUrl := "http://localhost:8080/tyk/reload"
+	// tykAuthToken := "foo"
 	url := "http://20.115.117.26:8080/tyk/apis"
 	reloadUrl := "http://20.115.117.26:8080/tyk/reload"
 	tykAuthToken := "352d20ee67be67f6340b4c0605b044b7"
@@ -108,7 +109,7 @@ func Publish(ctx *gin.Context) {
 		},
 		"disable_rate_limit": false,
 		"global_rate_limit": {
-			"rate": 3,
+			"rate": 40,
 			"per": 60
 		},
 		"active": true
@@ -187,7 +188,7 @@ func Publish(ctx *gin.Context) {
 			},
 			"disable_rate_limit": false,
 			"global_rate_limit": {
-				"rate": 3,
+				"rate": 40,
 				"per": 60
 			},
 			"active": true
