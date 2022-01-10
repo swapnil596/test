@@ -21,7 +21,7 @@ func TestCreateApiEndpoint(test *testing.T) {
 
 	router.POST(endpoint, Construct)
 
-	var jsonStr = []byte(`{"name":"NamrataCreate","project_id":222,"version":"a2","protocol":"a2","created_by":"A2","degree":2}`)
+	var jsonStr = []byte(`{"name":"NamrataCreate","project_id":"222","version":"a2","protocol":"a2","created_by":"A2","degree":2}`)
 	req, _ := http.NewRequest(http.MethodPost, endpoint, bytes.NewBuffer(jsonStr))
 
 	common.TestHTTPResponse(test, router, req, func(w *httptest.ResponseRecorder) bool {

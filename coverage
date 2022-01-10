@@ -1,4 +1,9 @@
 mode: set
+api-registration-backend/controllers/apis/updatename.go:35.37,40.49 3 1
+api-registration-backend/controllers/apis/updatename.go:46.2,47.16 2 1
+api-registration-backend/controllers/apis/updatename.go:53.2,54.8 2 1
+api-registration-backend/controllers/apis/updatename.go:40.49,44.3 2 0
+api-registration-backend/controllers/apis/updatename.go:47.16,51.3 2 0
 api-registration-backend/controllers/apis/copy.go:14.39,17.18 2 1
 api-registration-backend/controllers/apis/copy.go:22.2,29.16 5 1
 api-registration-backend/controllers/apis/copy.go:35.2,36.8 2 1
@@ -7,8 +12,8 @@ api-registration-backend/controllers/apis/copy.go:29.16,33.3 2 1
 api-registration-backend/controllers/apis/create.go:12.34,16.44 2 1
 api-registration-backend/controllers/apis/create.go:22.2,24.16 2 1
 api-registration-backend/controllers/apis/create.go:29.2,32.8 2 1
-api-registration-backend/controllers/apis/create.go:16.44,20.3 2 1
-api-registration-backend/controllers/apis/create.go:24.16,28.3 2 0
+api-registration-backend/controllers/apis/create.go:16.44,20.3 2 0
+api-registration-backend/controllers/apis/create.go:24.16,28.3 2 1
 api-registration-backend/controllers/apis/delete.go:13.32,18.16 3 1
 api-registration-backend/controllers/apis/delete.go:23.2,24.8 2 1
 api-registration-backend/controllers/apis/delete.go:18.16,22.3 2 1
@@ -19,7 +24,7 @@ api-registration-backend/controllers/apis/list.go:10.38,19.16 6 1
 api-registration-backend/controllers/apis/list.go:22.2,23.8 2 1
 api-registration-backend/controllers/apis/list.go:19.16,21.3 1 0
 api-registration-backend/controllers/apis/update.go:14.33,41.18 5 1
-api-registration-backend/controllers/apis/update.go:50.2,56.16 6 1
+api-registration-backend/controllers/apis/update.go:50.2,56.16 5 1
 api-registration-backend/controllers/apis/update.go:61.2,65.16 4 1
 api-registration-backend/controllers/apis/update.go:70.2,74.16 4 1
 api-registration-backend/controllers/apis/update.go:79.2,83.16 4 1
@@ -32,6 +37,3 @@ api-registration-backend/controllers/apis/update.go:65.16,69.3 2 0
 api-registration-backend/controllers/apis/update.go:74.16,78.3 2 0
 api-registration-backend/controllers/apis/update.go:83.16,87.3 2 0
 api-registration-backend/controllers/apis/update.go:96.16,100.3 2 1
-api-registration-backend/controllers/apis/updatename.go:13.35,44.16 8 1
-api-registration-backend/controllers/apis/updatename.go:50.2,51.8 2 1
-api-registration-backend/controllers/apis/updatename.go:44.16,48.3 2 0
