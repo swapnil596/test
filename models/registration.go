@@ -3,11 +3,14 @@ package models
 import (
 	"api-registration-backend/azure"
 	"api-registration-backend/config"
+	"bytes"
 	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -128,13 +131,13 @@ func CopyApi(newuser ApiRegistration, id string) (error, ApiRegistration) {
 	}
 	defer db.Close()
 
-	row := db.QueryRow("Select * FROM db_flowxpert.abhic_api_registration Where id=?", id)
-	err := row.Scan(&newuser.Id, &newuser.ProjectId, &newuser.Name, &newuser.Version, &newuser.RateLimit, &newuser.Url, &newuser.Method, &newuser.Protocol, &newuser.Headers, &newuser.Request, &newuser.Response, &newuser.QueryParams, &newuser.Degree, &newuser.CreatedBy, &newuser.CreatedDate, &newuser.ModifiedBy, &newuser.ModifiedDate, &newuser.Active)
+	row := db.QueryRow("Select id, project_id, name, version, cache_timeout, url, method, protocol, headers, request, response, query_params, tykuri, rate_limit, degree, created_by, created_date, modified_by, modified_date, active FROM db_flowxpert.abhic_api_registration Where id=?", id)
+	err := row.Scan(&newuser.Id, &newuser.ProjectId, &newuser.Name, &newuser.Version, &newuser.CacheTimeout, &newuser.Url, &newuser.Method, &newuser.Protocol, &newuser.Headers, &newuser.Request, &newuser.Response, &newuser.QueryParams, &newuser.TykUri, &newuser.RateLimit, &newuser.Degree, &newuser.CreatedBy, &newuser.CreatedDate, &newuser.ModifiedBy, &newuser.ModifiedDate, &newuser.Active)
 	if err != nil {
 		return err, newuser
 	}
 
-	stmt, err := db.Prepare("INSERT INTO db_flowxpert.abhic_api_registration (id,project_id,name,version,rate_limit,url,method, protocol,headers,request,response,query_params,degree,created_by, created_date, modified_by, modified_date,active) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+	stmt, err := db.Prepare("INSERT INTO db_flowxpert.abhic_api_registration (id, project_id, name, version, cache_timeout, url, method, protocol, headers, request, response, query_params, tykuri, rate_limit, degree, created_by, created_date, modified_by, modified_date, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 	defer stmt.Close()
 
 	if err != nil {
@@ -142,7 +145,7 @@ func CopyApi(newuser ApiRegistration, id string) (error, ApiRegistration) {
 	}
 	uuid, _ := uuid.NewRandom()
 
-	_, err = stmt.Exec(uuid, newuser.ProjectId, newuser.Name, newuser.Version, newuser.RateLimit, newuser.Url, newuser.Method, newuser.Protocol, newuser.Headers, newuser.Request, newuser.Response, newuser.QueryParams, newuser.Degree, newuser.CreatedBy, newuser.CreatedDate, newuser.ModifiedBy, newuser.ModifiedDate, newuser.Active)
+	_, err = stmt.Exec(uuid, newuser.ProjectId, newuser.Name, newuser.Version, newuser.CacheTimeout, newuser.Url, newuser.Method, newuser.Protocol, newuser.Headers, newuser.Request, newuser.Response, newuser.QueryParams, newuser.TykUri, newuser.RateLimit, newuser.Degree, newuser.CreatedBy, newuser.CreatedDate, newuser.ModifiedBy, newuser.ModifiedDate, newuser.Active)
 	if err != nil {
 		return err, newuser
 	}
@@ -323,6 +326,227 @@ func PermaDeleteApi(id string) error {
 		return errors.New("Invalid ID")
 	}
 	return nil
+}
+
+func PublishApi(tempAPI TempApi) (string, error) {
+	endpoint := tempAPI.Url
+	name := tempAPI.Name
+	apiId := tempAPI.Id
+
+	// url := "http://localhost:8080/tyk/apis"
+	// reloadUrl := "http://localhost:8080/tyk/reload"
+	// tykAuthToken := "foo"
+	url := "http://20.115.117.26:8080/tyk/apis"
+	reloadUrl := "http://20.115.117.26:8080/tyk/reload"
+	tykAuthToken := "352d20ee67be67f6340b4c0605b044b7"
+
+	endpointSplit := strings.SplitN(endpoint, "/", 4)
+	listenPath := "/" + endpointSplit[len(endpointSplit)-1]
+
+	enableCache := "true"
+
+	_, err := strconv.Atoi(tempAPI.CacheTimeout)
+	if err != nil {
+		return "", err
+	}
+
+	_, err = strconv.Atoi(tempAPI.RateLimit)
+	if err != nil {
+		return "", err
+	}
+
+	if tempAPI.CacheTimeout == "0" {
+		enableCache = "false"
+	}
+
+	reqTemplate := fmt.Sprintf(`{
+		"name": "%s",
+		"api_id": "%s",
+		"org_id": "1",
+		"use_keyless": true,
+		"definition": {
+			"location": "header",
+			"key": "x-api-version"
+		},
+		"version_data": {
+			"not_versioned": true,
+			"versions": {
+				"Default": {
+					"name": "Default",
+					"use_extended_paths": true
+				}
+			}
+		},
+		"proxy": {
+			"listen_path": "%s",
+			"target_url": "%s",
+			"strip_listen_path": true
+		},
+		"CORS": {
+			"enable": false,
+			"allowed_origins": [
+				"*"
+			],
+			"allowed_methods": [
+				"GET",
+				"POST",
+				"HEAD"
+			],
+			"allowed_headers": [
+				"Origin",
+				"Accept",
+				"Content-Type",
+				"X-Requested-With",
+				"Authorization"
+			],
+			"exposed_headers": [],
+			"allow_credentials": false,
+			"max_age": 24,
+			"options_passthrough": false,
+			"debug": false
+		},
+		"disable_rate_limit": false,
+		"global_rate_limit": {
+			"rate": %s,
+			"per": 60
+		},
+		"cache_options": {
+			"cache_timeout": %s,
+			"enable_cache": %s,
+			"cache_all_safe_requests": false,
+			"cache_response_codes": [200, 201, 202],
+			"enable_upstream_cache_control": false,
+			"cache_control_ttl_header": "",
+			"cache_by_headers": []
+		},
+		"active": true
+	}`, name, apiId, listenPath, endpoint, tempAPI.RateLimit, tempAPI.CacheTimeout, enableCache)
+
+	if strings.Contains(listenPath, "{") {
+		urlComponents := strings.Split(listenPath, "/")
+
+		rewrite_to := ""
+		i := 1
+
+		for _, comp := range urlComponents {
+			if strings.HasPrefix(comp, "{") {
+				rewrite_to += "/" + "$" + strconv.Itoa(i)
+				i += 1
+			} else {
+				rewrite_to += "/" + comp
+			}
+		}
+
+		rewrite_to = endpointSplit[0] + "//" + endpointSplit[2] + rewrite_to
+
+		reqTemplate = fmt.Sprintf(`{
+			"name": "%s",
+			"api_id": "%s",
+			"org_id": "1",
+			"use_keyless": true,
+			"definition": {
+				"location": "header",
+				"key": "x-api-version"
+			},
+			"version_data": {
+				"not_versioned": true,
+				"versions": {
+					"Default": {
+						"name": "Default",
+						"use_extended_paths": true
+					}
+				}
+			},
+			"url_rewrites": [
+				{
+					"path": "%s",
+					"method": "GET",
+					"match_pattern": "(\\w+)",
+					"rewrite_to": "%s"
+				}
+			],
+			"proxy": {
+				"listen_path": "%s",
+				"target_url": "%s",
+				"strip_listen_path": true
+			},
+			"CORS": {
+				"enable": false,
+				"allowed_origins": [
+					"*"
+				],
+				"allowed_methods": [
+					"GET",
+					"POST",
+					"HEAD"
+				],
+				"allowed_headers": [
+					"Origin",
+					"Accept",
+					"Content-Type",
+					"X-Requested-With",
+					"Authorization"
+				],
+				"exposed_headers": [],
+				"allow_credentials": false,
+				"max_age": 24,
+				"options_passthrough": false,
+				"debug": false
+			},
+			"disable_rate_limit": false,
+			"global_rate_limit": {
+				"rate": %s,
+				"per": 60
+			},
+			"cache_options": {
+				"cache_timeout": %s,
+				"enable_cache": %s,
+				"cache_all_safe_requests": false,
+				"cache_response_codes": [200, 201, 202],
+				"enable_upstream_cache_control": false,
+				"cache_control_ttl_header": "",
+				"cache_by_headers": []
+			},
+			"active": true
+		}`, name, apiId, listenPath, rewrite_to, listenPath, endpoint, tempAPI.RateLimit, tempAPI.CacheTimeout, enableCache)
+	}
+
+	// reqBody should contain the payload for tyk
+	var reqBody = []byte(reqTemplate)
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(reqBody))
+	req.Header.Set("x-tyk-authorization", tykAuthToken)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return "", err
+	}
+
+	req, err = http.NewRequest("GET", reloadUrl, bytes.NewBuffer(reqBody))
+	req.Header.Set("x-tyk-authorization", tykAuthToken)
+
+	client = &http.Client{}
+	resp, err = client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return "", err
+	}
+
+	err = UpdateTykDetails(tempAPI.Id, listenPath, tempAPI.RateLimit, tempAPI.CacheTimeout)
+	if err != nil {
+		return "", err
+	}
+
+	return listenPath, nil
 }
 
 func GetApiDetails(id string) (map[string]interface{}, error) {
