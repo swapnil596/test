@@ -268,7 +268,7 @@ func UpdateName(id string, name string) error {
 	return nil
 }
 
-func UpdateTykUri(id string, tykuri string) error {
+func UpdateTykDetails(id string, tykuri string, rateLimit string, cacheTimeout string) error {
 	var db, errdb = config.Connectdb()
 	if errdb != nil {
 		return errdb
@@ -276,7 +276,7 @@ func UpdateTykUri(id string, tykuri string) error {
 
 	defer db.Close()
 
-	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET tykuri=?, modified_by=?, modified_date=? WHERE id=?;")
+	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET tykuri=?, rate_limit=?, cache_timeout=?, modified_by=?, modified_date=? WHERE id=?;")
 
 	if err != nil {
 		return err
@@ -284,7 +284,7 @@ func UpdateTykUri(id string, tykuri string) error {
 	defer stmt.Close()
 
 	currentTime := time.Now()
-	_, err = stmt.Exec(tykuri, "", currentTime.Format("2006-01-02"), id)
+	_, err = stmt.Exec(tykuri, rateLimit, cacheTimeout, "", currentTime.Format("2006-01-02"), id)
 
 	if err != nil {
 		return err

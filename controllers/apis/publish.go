@@ -29,13 +29,14 @@ func Publish(ctx *gin.Context) {
 		Response     map[string]interface{} `json:"responseBody" form:"responseBody"`
 		QueryParams  map[string]interface{} `json:"queryParameter" form:"queryParameter"`
 		TykUri       sql.NullString         `json:"tykuri"`
+		CacheTimeout string                 `json:"cacheTimeout"`
+		RateLimit    string                 `json:"rateLimit"`
 		Degree       int                    `json:"degree" form:"degree"`
 		Active       bool                   `json:"active" form:"active"`
 		CreatedBy    string                 `json:"created_by" form:"created_by"`
 		CreatedDate  string                 `json:"created_date" form:"created_date"`
 		ModifiedBy   sql.NullString         `json:"modified_by" form:"modified_by"`
 		ModifiedDate sql.NullString         `json:"modified_date" form:"modified_date"`
-		RateLimit    int64                  `json:"rate_limit" form:"rate_limit"`
 	}
 
 	var tempAPI TempApi
@@ -60,6 +61,12 @@ func Publish(ctx *gin.Context) {
 
 	endpointSplit := strings.SplitN(endpoint, "/", 4)
 	listenPath := "/" + endpointSplit[len(endpointSplit)-1]
+
+	enableCache := "true"
+
+	if tempAPI.CacheTimeout == "0" || tempAPI.CacheTimeout == "" {
+		enableCache = "false"
+	}
 
 	reqTemplate := fmt.Sprintf(`{
 		"name": "%s",
@@ -109,11 +116,20 @@ func Publish(ctx *gin.Context) {
 		},
 		"disable_rate_limit": false,
 		"global_rate_limit": {
-			"rate": 40,
+			"rate": %s,
 			"per": 60
 		},
+		"cache_options": {
+			"cache_timeout": %s,
+			"enable_cache": %s,
+			"cache_all_safe_requests": false,
+			"cache_response_codes": [200, 201, 202],
+			"enable_upstream_cache_control": false,
+			"cache_control_ttl_header": "",
+			"cache_by_headers": []
+		},
 		"active": true
-	}`, name, apiId, listenPath, endpoint)
+	}`, name, apiId, listenPath, endpoint, tempAPI.RateLimit, tempAPI.CacheTimeout, enableCache)
 
 	if strings.Contains(listenPath, "{") {
 		urlComponents := strings.Split(listenPath, "/")
@@ -188,11 +204,20 @@ func Publish(ctx *gin.Context) {
 			},
 			"disable_rate_limit": false,
 			"global_rate_limit": {
-				"rate": 40,
+				"rate": %s,
 				"per": 60
 			},
+			"cache_options": {
+				"cache_timeout": %s,
+				"enable_cache": %s,
+				"cache_all_safe_requests": false,
+				"cache_response_codes": [200, 201, 202],
+				"enable_upstream_cache_control": false,
+				"cache_control_ttl_header": "",
+				"cache_by_headers": []
+			},
 			"active": true
-		}`, name, apiId, listenPath, rewrite_to, listenPath, endpoint)
+		}`, name, apiId, listenPath, rewrite_to, listenPath, endpoint, tempAPI.RateLimit, tempAPI.CacheTimeout, enableCache)
 	}
 
 	// reqBody should contain the payload for tyk
@@ -235,7 +260,7 @@ func Publish(ctx *gin.Context) {
 		return
 	}
 
-	err = models.UpdateTykUri(tempAPI.Id, listenPath)
+	err = models.UpdateTykDetails(tempAPI.Id, listenPath, tempAPI.RateLimit, tempAPI.CacheTimeout)
 	if err != nil {
 		common.FailResponse(ctx, http.StatusBadRequest, "Error",
 			gin.H{"errors": validations.ValidateErrors(err)})

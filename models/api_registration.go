@@ -17,12 +17,13 @@ type (
 		QueryParams  sql.NullString `json:"queryParameter" form:"queryParameter"`
 		StatusCode   sql.NullInt64  `json:"status_code" form:"status_code"`
 		TykUri       sql.NullString `json:"tykuri"`
+		CacheTimeout sql.NullString `json:"cacheTimeout"`
+		RateLimit    sql.NullString `json:"rateLimit"`
 		Degree       int            `json:"degree" form:"degree"`
 		CreatedBy    string         `json:"created_by" form:"created_by"`
 		CreatedDate  string         `json:"created_date" form:"created_date"`
 		ModifiedBy   sql.NullString `json:"modified_by" form:"modified_by"`
 		ModifiedDate sql.NullString `json:"modified_date" form:"modified_date"`
 		Active       bool           `json:"active" form:"active"`
-		RateLimit    sql.NullInt64  `json:"rate_limit" form:"rate_limit"`
 	}
 )
