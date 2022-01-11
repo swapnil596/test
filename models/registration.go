@@ -131,13 +131,13 @@ func CopyApi(newuser ApiRegistration, id string) (error, ApiRegistration) {
 	}
 	defer db.Close()
 
-	row := db.QueryRow("Select id, project_id, name, version, cache_timeout, url, method, protocol, headers, request, response, query_params, tykuri, rate_limit, degree, created_by, created_date, modified_by, modified_date, active FROM db_flowxpert.abhic_api_registration Where id=?", id)
+	row := db.QueryRow("Select * FROM db_flowxpert.abhic_api_registration Where id=?", id)
 	err := row.Scan(&newuser.Id, &newuser.ProjectId, &newuser.Name, &newuser.Version, &newuser.CacheTimeout, &newuser.Url, &newuser.Method, &newuser.Protocol, &newuser.Headers, &newuser.Request, &newuser.Response, &newuser.QueryParams, &newuser.TykUri, &newuser.RateLimit, &newuser.Degree, &newuser.CreatedBy, &newuser.CreatedDate, &newuser.ModifiedBy, &newuser.ModifiedDate, &newuser.Active)
 	if err != nil {
 		return err, newuser
 	}
 
-	stmt, err := db.Prepare("INSERT INTO db_flowxpert.abhic_api_registration (id, project_id, name, version, cache_timeout, url, method, protocol, headers, request, response, query_params, tykuri, rate_limit, degree, created_by, created_date, modified_by, modified_date, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO db_flowxpert.abhic_api_registration (id,project_id,name,version,cache_timeout,url,method, protocol,headers,request,response,query_params,tykuri, rate_limit, degree,created_by, created_date, modified_by, modified_date,active) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
 	defer stmt.Close()
 
 	if err != nil {

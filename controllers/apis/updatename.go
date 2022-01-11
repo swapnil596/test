@@ -9,29 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// func UpdateName(ctx *gin.Context) {
-// 	id := ctx.Param("id")
-// 	//name := ctx.Param("name")
-
-// 	//var tempApi TempApi
-// 	var updateapi models.ApiRegistration
-
-// 	//updateapi.Name = tempApi.Name
-
-// 	//err := models.UpdateName(updateapi, id, name)
-// 	if err := nil {
-// 		common.FailResponse(ctx, http.StatusInternalServerError, "Error",
-// 			gin.H{"errors": validations.ValidateErrors(err)})
-// 		return
-// 	}
-
-// 	err := models.UpdateName(updateapi, id, name)
-
-// 	common.SuccessResponse(ctx, "")
-// 	return
-
-// }
-
 func OverhaulName(ctx *gin.Context) {
 	id := ctx.Param("id")
 
