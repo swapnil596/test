@@ -28,8 +28,8 @@ func Overhaul(ctx *gin.Context) {
 		Response     map[string]interface{} `json:"responseBody" form:"responseBody"`
 		QueryParams  map[string]interface{} `json:"queryParameter" form:"queryParameter"`
 		TykUri       sql.NullString         `json:"tykuri"`
-		CacheTimeout sql.NullString         `json:"cacheTimeout"`
-		RateLimit    sql.NullString         `json:"rateLimit"`
+		CacheTimeout string                 `json:"cacheTimeout"`
+		RateLimit    string                 `json:"rateLimit"`
 		Degree       int                    `json:"degree" form:"degree"`
 		Active       bool                   `json:"active" form:"active"`
 		CreatedBy    string                 `json:"created_by" form:"created_by"`
@@ -91,6 +91,8 @@ func Overhaul(ctx *gin.Context) {
 	updateapi.QueryParams = sql.NullString{String: data, Valid: true}
 	updateapi.ModifiedBy = sql.NullString{String: tempAPI.ModifiedBy.String, Valid: true}
 	updateapi.ModifiedDate = sql.NullString{String: tempAPI.ModifiedDate.String, Valid: true}
+	updateapi.RateLimit = sql.NullString{String: tempAPI.RateLimit, Valid: true}
+	updateapi.CacheTimeout = sql.NullString{String: tempAPI.CacheTimeout, Valid: true}
 
 	err = models.UpdateApi(updateapi, id, degree)
 

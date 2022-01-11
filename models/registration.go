@@ -226,7 +226,7 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 	response_link, err := azure.UploadBytesToBlob([]byte(updateapi.Response.String))
 	query_params_link, err := azure.UploadBytesToBlob([]byte(updateapi.QueryParams.String))
 
-	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET rate_limit=?, url=?, method=?, headers=?, request=?, response=?, query_params=?, modified_by=?, modified_date=? WHERE id=?;")
+	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET rate_limit=?, url=?, method=?, headers=?, request=?, response=?, query_params=?, rate_limit=?, cache_timeout=?, modified_by=?, modified_date=? WHERE id=?;")
 
 	if err != nil {
 		return err
@@ -234,7 +234,7 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 	defer stmt.Close()
 
 	currentTime := time.Now()
-	_, err = stmt.Exec(updateapi.RateLimit, updateapi.Url, updateapi.Method, headers_link, request_link, response_link, query_params_link, "", currentTime.Format("2006-01-02"), id)
+	_, err = stmt.Exec(updateapi.RateLimit, updateapi.Url, updateapi.Method, headers_link, request_link, response_link, query_params_link, updateapi.RateLimit.String, updateapi.CacheTimeout.String, "", currentTime.Format("2006-01-02"), id)
 
 	if err != nil {
 		return err
@@ -336,7 +336,7 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 
 	defer db.Close()
 
-	var headers, url, method, request, response, query_params sql.NullString
+	var headers, url, method, request, response, query_params, rate_limit, cache_timeout sql.NullString
 	var name string
 	data_json := make(map[string]string)
 
@@ -345,8 +345,8 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 	}
 	defer db.Close()
 
-	row := db.QueryRow("SELECT id, name, headers, url, method, request, response, query_params FROM db_flowxpert.abhic_api_registration WHERE id=?;", id)
-	err := row.Scan(&id, &name, &headers, &url, &method, &request, &response, &query_params)
+	row := db.QueryRow("SELECT id, name, headers, url, method, request, response, query_params, rate_limit, cache_timeout FROM db_flowxpert.abhic_api_registration WHERE id=?;", id)
+	err := row.Scan(&id, &name, &headers, &url, &method, &request, &response, &query_params, &rate_limit, &cache_timeout)
 
 	data_json["name"] = name
 
@@ -398,6 +398,8 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 		"requestBody":    request_json,
 		"responseBody":   response_json,
 		"queryParameter": query_param_json,
+		"rate_limit":     rate_limit.String,
+		"cache_timeout":  cache_timeout.String,
 	}
 
 	switch {
