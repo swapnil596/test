@@ -336,7 +336,7 @@ func PublishApi(tempAPI TempApi) (string, error) {
 	// url := "http://localhost:8080/tyk/apis"
 	// reloadUrl := "http://localhost:8080/tyk/reload"
 	// tykAuthToken := "foo"
-	tyk := "http://20.115.117.26:8080"
+	tyk := "http://20.127.41.143:8080"
 	url := fmt.Sprintf("%s/tyk/apis", tyk)
 	reloadUrl := fmt.Sprintf("%s/tyk/reload", tyk)
 	tykAuthToken := "352d20ee67be67f6340b4c0605b044b7"
