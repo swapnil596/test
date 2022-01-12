@@ -160,13 +160,13 @@ func CreateApi(regs ApiRegistration) (string, error) {
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("INSERT INTO db_flowxpert.abhic_api_registration (id, name, project_id, version, protocol, created_by, degree) VALUES (?, ?, ?, ?, ?, ?, ?);")
+	stmt, err := db.Prepare("INSERT INTO db_flowxpert.abhic_api_registration (id, name, project_id, version, protocol, rate_limit, cahce_timeout, created_by, degree) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);")
 	if err != nil {
 		return uuid.String(), err
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(uuid, regs.Name, regs.ProjectId, regs.Version, regs.Protocol, regs.CreatedBy, regs.Degree)
+	_, err = stmt.Exec(uuid, regs.Name, regs.ProjectId, regs.Version, regs.Protocol, "0", "0", regs.CreatedBy, regs.Degree)
 
 	if err != nil {
 		return uuid.String(), err
