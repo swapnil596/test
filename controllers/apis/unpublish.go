@@ -9,17 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Publish(ctx *gin.Context) {
-	var tempAPI models.TempApi
+func UnPublish(ctx *gin.Context) {
+	apiId := ctx.Param("id")
 
-	// validating request data
-	if err := ctx.BindJSON(&tempAPI); err != nil {
-		common.FailResponse(ctx, http.StatusBadRequest, "Error",
-			gin.H{"errors": validations.ValidateErrors(err)})
-		return
-	}
-
-	data, err := models.PublishApi(tempAPI)
+	data, err := models.UnPublishApi(apiId)
 	if err != nil {
 		common.FailResponse(ctx, http.StatusBadRequest, "Error",
 			gin.H{"errors": validations.ValidateErrors(err)})

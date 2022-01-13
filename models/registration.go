@@ -683,6 +683,91 @@ func PublishApi(tempAPI TempApi) (gin.H, error) {
 	return gin.H{"url": fmt.Sprintf("%s%s", tyk, listenPath), "authKey": keyResponse.Key}, nil
 }
 
+func UnPublishApi(apiID string) (string, error) {
+	var db, errdb = config.Connectdb()
+	if errdb != nil {
+		return "", errdb
+	}
+	defer db.Close()
+
+	// tyk := "http://localhost:8080"
+	// tykAuthToken := "foo"
+	tyk := "http://20.127.41.143:8080"
+	url := fmt.Sprintf("%s/tyk/apis/%s", tyk, apiID)
+	reloadUrl := fmt.Sprintf("%s/tyk/reload", tyk)
+	tykAuthToken := "352d20ee67be67f6340b4c0605b044b7"
+
+	var reqBody = []byte("")
+	req, err := http.NewRequest("DELETE", url, bytes.NewBuffer(reqBody))
+	req.Header.Set("x-tyk-authorization", tykAuthToken)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	// if resp.StatusCode != 200 {
+	// 	return "", err
+	// }
+
+	req, err = http.NewRequest("GET", reloadUrl, bytes.NewBuffer(reqBody))
+	req.Header.Set("x-tyk-authorization", tykAuthToken)
+
+	client = &http.Client{}
+	resp, err = client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	// if resp.StatusCode != 200 {
+	// 	return "", err
+	// }
+
+	var key string
+
+	row := db.QueryRow("SELECT authkey FROM db_flowxpert.abhic_api_registration WHERE id=?", apiID)
+	err = row.Scan(&key)
+	if err != nil {
+		return "", err
+	}
+
+	if key != "" {
+		keysDeleteUrl := fmt.Sprintf("%s/tyk/keys/%s", tyk, key)
+
+		var reqBody = []byte("")
+		req, err := http.NewRequest("DELETE", keysDeleteUrl, bytes.NewBuffer(reqBody))
+		req.Header.Set("x-tyk-authorization", tykAuthToken)
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			return "", err
+		}
+		defer resp.Body.Close()
+
+		// if resp.StatusCode != 200 {
+		// 	return "", err
+		// }
+	}
+
+	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET tykuri=?, authkey=?, degree=?, modified_by=?, modified_date=? WHERE id=?;")
+	if err != nil {
+		return "", err
+	}
+	defer stmt.Close()
+
+	currentTime := time.Now()
+	_, err = stmt.Exec("", "", 0, "", currentTime.Format("2006-01-02"), apiID)
+	if err != nil {
+		return "", err
+	}
+
+	return "API unpublished successfully", nil
+}
+
 func GetApiDetails(id string) (map[string]interface{}, error) {
 	var db, errdb = config.Connectdb()
 
@@ -691,20 +776,15 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 	if errdb != nil {
 		return reg, errdb
 	}
-
 	defer db.Close()
 
 	var headers, url, method, request, response, query_params, rate_limit, rate_limit_per, cache_timeout, throttle_interval, retries, url2 sql.NullString
 	var name string
+	var degree int
 	data_json := make(map[string]string)
 
-	if errdb != nil {
-		return reg, errdb
-	}
-	defer db.Close()
-
-	row := db.QueryRow("SELECT id, name, headers, url, method, request, response, query_params, rate_limit, rate_limit_per, cache_timeout, throttle_interval, retries, url2 FROM db_flowxpert.abhic_api_registration WHERE id=?;", id)
-	err := row.Scan(&id, &name, &headers, &url, &method, &request, &response, &query_params, &rate_limit, &rate_limit_per, &cache_timeout, &throttle_interval, &retries, &url2)
+	row := db.QueryRow("SELECT id, name, headers, url, method, request, response, query_params, rate_limit, rate_limit_per, cache_timeout, throttle_interval, retries, url2, degree FROM db_flowxpert.abhic_api_registration WHERE id=?;", id)
+	err := row.Scan(&id, &name, &headers, &url, &method, &request, &response, &query_params, &rate_limit, &rate_limit_per, &cache_timeout, &throttle_interval, &retries, &url2, &degree)
 
 	data_json["name"] = name
 
@@ -762,6 +842,7 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 		"throttle_interval": throttle_interval.String,
 		"retries":           retries.String,
 		"url2":              url2.String,
+		"degree":            degree,
 	}
 
 	switch {
