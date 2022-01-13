@@ -19,6 +19,9 @@ type (
 		TykUri       sql.NullString `json:"tykuri"`
 		CacheTimeout sql.NullString `json:"cacheTimeout"`
 		RateLimit    sql.NullString `json:"rateLimit"`
+		Retries      sql.NullString `json:"retries"`
+		Url2         sql.NullString `json:"url2"`
+		AuthKey      sql.NullString `json:"authkey"`
 		Degree       int            `json:"degree" form:"degree"`
 		CreatedBy    string         `json:"created_by" form:"created_by"`
 		CreatedDate  string         `json:"created_date" form:"created_date"`
@@ -42,6 +45,9 @@ type (
 		TykUri       sql.NullString         `json:"tykuri"`
 		CacheTimeout string                 `json:"cacheTimeout"`
 		RateLimit    string                 `json:"rateLimit"`
+		Retries      string                 `json:"retries"`
+		Url2         string                 `json:"url2"`
+		AuthKey      string                 `json:"authkey"`
 		Degree       int                    `json:"degree" form:"degree"`
 		Active       bool                   `json:"active" form:"active"`
 		CreatedBy    string                 `json:"created_by" form:"created_by"`
