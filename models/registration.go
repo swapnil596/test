@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
@@ -330,18 +331,18 @@ func PermaDeleteApi(id string) error {
 	return nil
 }
 
-func PublishApi(tempAPI TempApi) (string, error) {
+func PublishApi(tempAPI TempApi) (gin.H, error) {
 	endpoint := tempAPI.Url
 	name := tempAPI.Name
 	apiId := tempAPI.Id
 
-	tyk := "http://localhost:8080"
-	tykAuthToken := "foo"
-	// tyk := "http://20.127.41.143:8080"
+	// tyk := "http://localhost:8080"
+	// tykAuthToken := "foo"
+	tyk := "http://20.127.41.143:8080"
 	url := fmt.Sprintf("%s/tyk/apis", tyk)
 	reloadUrl := fmt.Sprintf("%s/tyk/reload", tyk)
 	keysCreateUrl := fmt.Sprintf("%s/tyk/keys/create", tyk)
-	// tykAuthToken := "352d20ee67be67f6340b4c0605b044b7"
+	tykAuthToken := "352d20ee67be67f6340b4c0605b044b7"
 
 	endpointSplit := strings.SplitN(endpoint, "/", 4)
 	listenPath := "/" + endpointSplit[len(endpointSplit)-1]
@@ -351,17 +352,17 @@ func PublishApi(tempAPI TempApi) (string, error) {
 
 	_, err := strconv.Atoi(tempAPI.CacheTimeout)
 	if err != nil {
-		return "", err
+		return gin.H{"url": "", "authKey": ""}, err
 	}
 
 	_, err = strconv.Atoi(tempAPI.RateLimit)
 	if err != nil {
-		return "", err
+		return gin.H{"url": "", "authKey": ""}, err
 	}
 
 	_, err = strconv.Atoi(tempAPI.Retries)
 	if err != nil {
-		return "", err
+		return gin.H{"url": "", "authKey": ""}, err
 	}
 
 	if tempAPI.CacheTimeout == "0" {
@@ -588,12 +589,12 @@ func PublishApi(tempAPI TempApi) (string, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return gin.H{"url": "", "authKey": ""}, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return "", err
+		return gin.H{"url": "", "authKey": ""}, err
 	}
 
 	req, err = http.NewRequest("GET", reloadUrl, bytes.NewBuffer(reqBody))
@@ -602,12 +603,12 @@ func PublishApi(tempAPI TempApi) (string, error) {
 	client = &http.Client{}
 	resp, err = client.Do(req)
 	if err != nil {
-		return "", err
+		return gin.H{"url": "", "authKey": ""}, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return "", err
+		return gin.H{"url": "", "authKey": ""}, err
 	}
 
 	type KeyResponse struct {
@@ -648,12 +649,12 @@ func PublishApi(tempAPI TempApi) (string, error) {
 		client = &http.Client{}
 		resp, err = client.Do(req)
 		if err != nil {
-			return "", err
+			return gin.H{"url": "", "authKey": ""}, err
 		}
 		defer resp.Body.Close()
 
 		if resp.StatusCode != 200 {
-			return "", err
+			return gin.H{"url": "", "authKey": ""}, err
 		} else {
 			json.NewDecoder(resp.Body).Decode(&keyResponse)
 		}
@@ -661,10 +662,10 @@ func PublishApi(tempAPI TempApi) (string, error) {
 
 	err = UpdateTykDetails(tempAPI.Id, listenPath, tempAPI.RateLimit, tempAPI.CacheTimeout, tempAPI.Retries, tempAPI.Url2, keyResponse.Key)
 	if err != nil {
-		return "", err
+		return gin.H{"url": "", "authKey": ""}, err
 	}
 
-	return fmt.Sprintf("%s%s", tyk, listenPath), nil
+	return gin.H{"url": fmt.Sprintf("%s%s", tyk, listenPath), "authKey": keyResponse.Key}, nil
 }
 
 func GetApiDetails(id string) (map[string]interface{}, error) {
