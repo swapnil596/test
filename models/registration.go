@@ -347,6 +347,7 @@ func PublishApi(tempAPI TempApi) (string, error) {
 	listenPath := "/" + endpointSplit[len(endpointSplit)-1]
 
 	enableCache := "true"
+	useKeyless := "true"
 
 	_, err := strconv.Atoi(tempAPI.CacheTimeout)
 	if err != nil {
@@ -365,6 +366,10 @@ func PublishApi(tempAPI TempApi) (string, error) {
 
 	if tempAPI.CacheTimeout == "0" {
 		enableCache = "false"
+	}
+
+	if tempAPI.Retries != "-1" {
+		useKeyless = "false"
 	}
 
 	versionData := fmt.Sprintf(`"version_data": {
@@ -441,7 +446,7 @@ func PublishApi(tempAPI TempApi) (string, error) {
 		"name": "%s",
 		"api_id": "%s",
 		"org_id": "1",
-		"use_keyless": true,
+		"use_keyless": %s,
 		"definition": {
 			"location": "header",
 			"key": "x-api-version",
@@ -491,7 +496,7 @@ func PublishApi(tempAPI TempApi) (string, error) {
 			"cache_by_headers": []
 		},
 		"active": true
-	}`, name, apiId, versionData, listenPath, endpoint, tempAPI.RateLimit, tempAPI.CacheTimeout, enableCache)
+	}`, name, apiId, useKeyless, versionData, listenPath, endpoint, tempAPI.RateLimit, tempAPI.CacheTimeout, enableCache)
 
 	if strings.Contains(listenPath, "{") {
 		urlComponents := strings.Split(listenPath, "/")
@@ -514,7 +519,7 @@ func PublishApi(tempAPI TempApi) (string, error) {
 			"name": "%s",
 			"api_id": "%s",
 			"org_id": "1",
-			"use_keyless": true,
+			"use_keyless": %s,
 			"definition": {
 				"location": "header",
 				"key": "x-api-version",
@@ -572,7 +577,7 @@ func PublishApi(tempAPI TempApi) (string, error) {
 				"cache_by_headers": []
 			},
 			"active": true
-		}`, name, apiId, versionData, listenPath, rewrite_to, listenPath, endpoint, tempAPI.RateLimit, tempAPI.CacheTimeout, enableCache)
+		}`, name, apiId, useKeyless, versionData, listenPath, rewrite_to, listenPath, endpoint, tempAPI.RateLimit, tempAPI.CacheTimeout, enableCache)
 	}
 
 	// reqBody should contain the payload for tyk
@@ -634,7 +639,7 @@ func PublishApi(tempAPI TempApi) (string, error) {
 					"allowance_scope": ""
 				}
 			}
-		}`, tempAPI.RateLimit, tempAPI.Retries, name, name, apiId)
+		}`, tempAPI.RateLimit, tempAPI.Retries, apiId, name, apiId)
 
 		reqBody = []byte(keysPayload)
 		req, err = http.NewRequest("POST", keysCreateUrl, bytes.NewBuffer(reqBody))
