@@ -19,6 +19,8 @@ type (
 		TykUri       sql.NullString `json:"tykuri"`
 		CacheTimeout sql.NullString `json:"cacheTimeout"`
 		RateLimit    sql.NullString `json:"rateLimit"`
+		RateLimitPer sql.NullString `json:"rateLimitPer"`
+		Interval     sql.NullString `json:"interval"`
 		Retries      sql.NullString `json:"retries"`
 		Url2         sql.NullString `json:"url2"`
 		AuthKey      sql.NullString `json:"authkey"`
@@ -45,6 +47,8 @@ type (
 		TykUri       sql.NullString         `json:"tykuri"`
 		CacheTimeout string                 `json:"cacheTimeout"`
 		RateLimit    string                 `json:"rateLimit"`
+		RateLimitPer string                 `json:"rateLimitPer"`
+		Interval     string                 `json:"interval"`
 		Retries      string                 `json:"retries"`
 		Url2         string                 `json:"url2"`
 		AuthKey      string                 `json:"authkey"`

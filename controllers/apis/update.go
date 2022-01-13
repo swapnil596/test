@@ -69,7 +69,9 @@ func Overhaul(ctx *gin.Context) {
 	updateapi.ModifiedBy = sql.NullString{String: tempAPI.ModifiedBy.String, Valid: true}
 	updateapi.ModifiedDate = sql.NullString{String: tempAPI.ModifiedDate.String, Valid: true}
 	updateapi.RateLimit = sql.NullString{String: tempAPI.RateLimit, Valid: true}
+	updateapi.RateLimitPer = sql.NullString{String: tempAPI.RateLimitPer, Valid: true}
 	updateapi.CacheTimeout = sql.NullString{String: tempAPI.CacheTimeout, Valid: true}
+	updateapi.Interval = sql.NullString{String: tempAPI.Interval, Valid: true}
 	updateapi.Retries = sql.NullString{String: tempAPI.Retries, Valid: true}
 	updateapi.Url2 = sql.NullString{String: tempAPI.Url2, Valid: true}
 
