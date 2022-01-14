@@ -834,11 +834,13 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 	var query_param_json map[string]interface{}
 	json.Unmarshal([]byte(data_json["query_params"]), &query_param_json)
 
-	cache, err := strconv.Atoi(cache_timeout.String)
-	if err != nil {
-		return reg, err
+	if cache_timeout.String != "0" && cache_timeout.String != "" {
+		cache, err := strconv.Atoi(cache_timeout.String)
+		if err != nil {
+			return reg, err
+		}
+		cache_timeout.String = strconv.Itoa((cache / 60))
 	}
-	cache_timeout.String = strconv.Itoa((cache / 60))
 
 	reg = map[string]interface{}{
 		"id":                id,
