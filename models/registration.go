@@ -348,10 +348,11 @@ func PublishApi(tempAPI TempApi) (gin.H, error) {
 	enableCache := "true"
 	useKeyless := "true"
 
-	_, err := strconv.Atoi(tempAPI.CacheTimeout)
+	cache, err := strconv.Atoi(tempAPI.CacheTimeout)
 	if err != nil {
 		return gin.H{"url": "", "authKey": ""}, err
 	}
+	tempAPI.CacheTimeout = strconv.Itoa((cache * 60))
 
 	_, err = strconv.Atoi(tempAPI.RateLimit)
 	if err != nil {
