@@ -682,12 +682,13 @@ func PublishApi(tempAPI TempApi) (gin.H, error) {
 		}
 	}
 
-	err = UpdateTykDetails(tempAPI.Id, listenPath, tempAPI.RateLimit, tempAPI.RateLimitPer, tempAPI.CacheTimeout, tempAPI.Interval, tempAPI.Retries, tempAPI.Url2, keyResponse.Key)
+	tykuri := fmt.Sprintf("%s%s", tyk, listenPath)
+	err = UpdateTykDetails(tempAPI.Id, tykuri, tempAPI.RateLimit, tempAPI.RateLimitPer, tempAPI.CacheTimeout, tempAPI.Interval, tempAPI.Retries, tempAPI.Url2, keyResponse.Key)
 	if err != nil {
 		return gin.H{"url": "", "authKey": ""}, err
 	}
 
-	return gin.H{"url": fmt.Sprintf("%s%s", tyk, listenPath), "authKey": keyResponse.Key}, nil
+	return gin.H{"url": tykuri, "authKey": keyResponse.Key}, nil
 }
 
 func UnPublishApi(apiID string) (string, error) {
