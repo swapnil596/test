@@ -1,14 +1,11 @@
 basePath: /api/v1/
-host: localhost:8008
+host: 13.90.25.178:8082
 info:
   contact:
-    email: neil.haria@think360.ai
-    name: Neil Haria
-    url: https://www.swagger.io/support
-  description: A service where the user can register it's own pre-built APIs to eventually
-    consume in Workflow Designer & Journey Designer
-  termsOfService: https://swagger.io/terms/
-  title: FlowXpert API Framer
-  version: "2.0"
+    email: namrata.chougule@think360.ai
+    name: Namrata Chougule
+  description: API Registration Portal Backend
+  title: FlowXpert API Registration Backend
+  version: "1.0"
 paths: {}
 swagger: "2.0"

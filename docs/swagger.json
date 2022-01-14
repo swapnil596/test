@@ -1,17 +1,15 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "A service where the user can register it's own pre-built APIs to eventually consume in Workflow Designer \u0026 Journey Designer",
-        "title": "FlowXpert API Framer",
-        "termsOfService": "https://swagger.io/terms/",
+        "description": "API Registration Portal Backend",
+        "title": "FlowXpert API Registration Backend",
         "contact": {
-            "name": "Neil Haria",
-            "url": "https://www.swagger.io/support",
-            "email": "neil.haria@think360.ai"
+            "name": "Namrata Chougule",
+            "email": "namrata.chougule@think360.ai"
         },
-        "version": "2.0"
+        "version": "1.0"
     },
-    "host": "localhost:8008",
+    "host": "13.90.25.178:8082",
     "basePath": "/api/v1/",
     "paths": {}
 }

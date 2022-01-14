@@ -17,11 +17,9 @@ var doc = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "https://swagger.io/terms/",
         "contact": {
-            "name": "Neil Haria",
-            "url": "https://www.swagger.io/support",
-            "email": "neil.haria@think360.ai"
+            "name": "Namrata Chougule",
+            "email": "namrata.chougule@think360.ai"
         },
         "version": "{{.Version}}"
     },
@@ -41,12 +39,12 @@ type swaggerInfo struct {
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
-	Version:     "2.0",
-	Host:        "localhost:8008",
+	Version:     "1.0",
+	Host:        "13.90.25.178:8082",
 	BasePath:    "/api/v1/",
 	Schemes:     []string{},
-	Title:       "FlowXpert API Framer",
-	Description: "A service where the user can register it's own pre-built APIs to eventually consume in Workflow Designer & Journey Designer",
+	Title:       "FlowXpert API Registration Backend",
+	Description: "API Registration Portal Backend",
 }
 
 type s struct{}

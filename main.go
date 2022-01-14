@@ -6,21 +6,24 @@ import (
 	"api-registration-backend/server"
 	"log"
 
+	_ "api-registration-backend/docs"
+
 	"github.com/gin-gonic/gin"
+	_ "github.com/swaggo/gin-swagger"
 )
 
-// @title FlowXpert API Framer
-// @version 2.0
-// @description A service where the user can register it's own pre-built APIs to eventually consume in Workflow Designer & Journey Designer
-// @termsOfService https://swagger.io/terms/
+// gin-swagger middleware
+// swagger embed files
 
-// @contact.name Neil Haria
-// @contact.url https://www.swagger.io/support
-// @contact.email neil.haria@think360.ai
+// @title        FlowXpert API Registration Backend
+// @version      1.0
+// @description  API Registration Portal Backend
 
-// @host localhost:8008
-// @BasePath /api/v1/
-// @query.collection.format multi
+// @contact.name   Namrata Chougule
+// @contact.email  namrata.chougule@think360.ai
+
+// @host      13.90.25.178:8082
+// @BasePath  /api/v1/
 
 func main() {
 

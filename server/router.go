@@ -2,17 +2,18 @@ package server
 
 import (
 	"api-registration-backend/common"
-	//"api-registration-backend/controllers"
 	"api-registration-backend/controllers/apis"
 	"net/http"
 	"reflect"
 	"strings"
 
+	_ "api-registration-backend/docs"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
-	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
 func NewRouter() *gin.Engine {
