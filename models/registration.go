@@ -237,6 +237,12 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 	}
 	defer stmt.Close()
 
+	cache, err := strconv.Atoi(updateapi.CacheTimeout.String)
+	if err != nil {
+		return err
+	}
+	updateapi.CacheTimeout.String = strconv.Itoa((cache * 60))
+
 	currentTime := time.Now()
 	_, err = stmt.Exec(updateapi.Url, updateapi.Method, headers_link, request_link, response_link, query_params_link, updateapi.RateLimit.String, updateapi.RateLimitPer.String, updateapi.CacheTimeout.String, updateapi.Interval.String, updateapi.Retries.String, updateapi.Url2.String, "", currentTime.Format("2006-01-02"), id)
 
