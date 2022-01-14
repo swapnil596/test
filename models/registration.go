@@ -785,13 +785,13 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 	}
 	defer db.Close()
 
-	var headers, url, method, request, response, query_params, rate_limit, rate_limit_per, cache_timeout, throttle_interval, retries, url2 sql.NullString
+	var headers, url, method, request, response, query_params, rate_limit, rate_limit_per, cache_timeout, throttle_interval, retries, url2, tykurl, auth_token sql.NullString
 	var name string
 	var degree int
 	data_json := make(map[string]string)
 
-	row := db.QueryRow("SELECT id, name, headers, url, method, request, response, query_params, rate_limit, rate_limit_per, cache_timeout, throttle_interval, retries, url2, degree FROM db_flowxpert.abhic_api_registration WHERE id=?;", id)
-	err := row.Scan(&id, &name, &headers, &url, &method, &request, &response, &query_params, &rate_limit, &rate_limit_per, &cache_timeout, &throttle_interval, &retries, &url2, &degree)
+	row := db.QueryRow("SELECT id, name, headers, url, method, request, response, query_params, rate_limit, rate_limit_per, cache_timeout, throttle_interval, retries, url2, degree, tykuri, authkey FROM db_flowxpert.abhic_api_registration WHERE id=?;", id)
+	err := row.Scan(&id, &name, &headers, &url, &method, &request, &response, &query_params, &rate_limit, &rate_limit_per, &cache_timeout, &throttle_interval, &retries, &url2, &degree, &tykurl, &auth_token)
 
 	data_json["name"] = name
 
@@ -858,6 +858,8 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 		"retries":           retries.String,
 		"url2":              url2.String,
 		"degree":            degree,
+		"tykurl":            tykurl.String,
+		"auth_token":        auth_token.String,
 	}
 
 	switch {
