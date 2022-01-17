@@ -9,6 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// UnPublish godoc
+// @Summary      UnPublish new api
+// @Description  unpublish new api based on data provided by request body
+// @Tags         unpublish_api
+// @Accept       json
+// @Produce      json
+// @Param        id path string true "Api id"
+// @Success      200  {object}  common.JSONSuccessResult
+// @Failure      400  {object}  common.JSONBadReqResult
+// @Failure      404  {object}  common.JSONNotFoundResult
+// @Failure      500  {object}  common.MethodNotAllowedResult
+// @Router       /registration/api/unpublish/{id} [post]
 func UnPublish(ctx *gin.Context) {
 	apiId := ctx.Param("id")
 

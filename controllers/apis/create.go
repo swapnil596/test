@@ -9,6 +9,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Construct godoc
+// @Summary      Create new api
+// @Description  create new api based on data provided by request body
+// @Tags         create_new_api
+// @Accept       json
+// @Produce      json
+// @Param        name body string true "Api name"
+// @Param        project_id body string true "Project id"
+// @Param        version body string true "Version"
+// @Param        protocol body string true "Protocol"
+// @Param        degree body string true "Degree"
+// @Success      200  {object}  common.JSONSuccessResult
+// @Failure      400  {object}  common.JSONBadReqResult
+// @Failure      404  {object}  common.JSONNotFoundResult
+// @Failure      500  {object}  common.MethodNotAllowedResult
+// @Router       /registration/api [post]
 func Construct(ctx *gin.Context) {
 	var regs models.ApiRegistration
 

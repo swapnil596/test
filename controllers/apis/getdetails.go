@@ -9,6 +9,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetDetails godoc
+// @Summary      Get specific api details
+// @Description  Get data for a specific api
+// @Tags         get_specific_api
+// @Param        id   path      int  true  "Api ID"
+// @Success      200  {object}  common.JSONSuccessResult
+// @Failure      400  {object}  common.JSONBadReqResult
+// @Failure      404  {object}  common.JSONNotFoundResult
+// @Failure      500  {object}  common.MethodNotAllowedResult
+// @Router       /registration/api/{id} [get]
 func GetDetails(ctx *gin.Context) {
 	id := ctx.Param("id")
 

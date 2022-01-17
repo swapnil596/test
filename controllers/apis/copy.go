@@ -11,6 +11,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CopyConstruct godoc
+// @Summary      Copy api
+// @Description  Create a new api from existing api
+// @Tags         copy_api
+// @Produce      json
+// @Param        id path string true "Api id"
+// @Success      200  {object}  common.JSONSuccessResult
+// @Failure      400  {object}  common.JSONBadReqResult
+// @Failure      404  {object}  common.JSONNotFoundResult
+// @Failure      500  {object}  common.MethodNotAllowedResult
+// @Router       /registration/api/{id} [post]
 func CloneConstruct(ctx *gin.Context) {
 	var db, errdb = config.Connectdb()
 

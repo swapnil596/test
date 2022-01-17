@@ -11,6 +11,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Overhaul godoc
+// @Summary      Update api
+// @Description  Update api's url,method,headers,queryParameter,requestBody and responseBody fields
+// @Tags         update_api
+// @Accept       json
+// @Produce      json
+// @Param        id path string true "Api id"
+// @Param        url body string true "Url"
+// @Param        method body string true "Method"
+// @Param        data body object true "Data object"
+// @Param        headers body string true "Headers"
+// @Param        queryParameter body string true "QueryParameter"
+// @Param        requestBody body string true "RequestBody"
+// @Param        responseBody body string true "ResponseBody"
+// @Success      200  {object}  common.JSONSuccessResult
+// @Failure      400  {object}  common.JSONBadReqResult
+// @Failure      404  {object}  common.JSONNotFoundResult
+// @Failure      500  {object}  common.MethodNotAllowedResult
+// @Router       registration/api/{id} [put]
 func Overhaul(ctx *gin.Context) {
 	id := ctx.Param("id")
 	degree := ctx.Request.URL.Query().Get("degree")
@@ -27,7 +46,6 @@ func Overhaul(ctx *gin.Context) {
 	}
 
 	var updateapi models.ApiRegistration
-	//updateapi.Name = tempAPI.Name
 	updateapi.Url = sql.NullString{String: tempAPI.Url, Valid: true}
 	updateapi.Method = sql.NullString{String: tempAPI.Method, Valid: true}
 

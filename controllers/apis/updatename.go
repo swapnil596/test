@@ -9,6 +9,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// OverhaulName godoc
+// @Summary      Update api's name
+// @Description  Update a api's name field
+// @Tags         update_api_name
+// @Accept       json
+// @Produce      json
+// @Param        id path string true "Api id"
+// @Param        name body string true "Api name"
+// @Success      200  {object}  common.JSONSuccessResult
+// @Failure      400  {object}  common.JSONBadReqResult
+// @Failure      404  {object}  common.JSONNotFoundResult
+// @Failure      500  {object}  common.MethodNotAllowedResult
+// @Router       /registration/api/name/{id} [put]
 func OverhaulName(ctx *gin.Context) {
 	id := ctx.Param("id")
 

@@ -9,6 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Publish godoc
+// @Summary      Publish new api
+// @Description  publish new api based on data provided by request body
+// @Tags         publish_new_api
+// @Accept       json
+// @Produce      json
+// @Param        id path string true "Api id"
+// @Success      200  {object}  common.JSONSuccessResult
+// @Failure      400  {object}  common.JSONBadReqResult
+// @Failure      404  {object}  common.JSONNotFoundResult
+// @Failure      500  {object}  common.MethodNotAllowedResult
+// @Router       /registration/api/publish/{id} [post]
 func Publish(ctx *gin.Context) {
 	var tempAPI models.TempApi
 

@@ -10,6 +10,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Terminate godoc
+// @Summary      Delete api
+// @Description  Delete a api by its id
+// @Tags         delete_api
+// @Produce      json
+// @Param        id path string true "Api id"
+// @Success      200  {object}  common.JSONSuccessResult
+// @Failure      400  {object}  common.JSONBadReqResult
+// @Failure      404  {object}  common.JSONNotFoundResult
+// @Failure      500  {object}  common.MethodNotAllowedResult
+// @Router       /registration/api/{id} [delete]
 func Terminate(c *gin.Context) {
 	uid := c.Params.ByName("id")
 
