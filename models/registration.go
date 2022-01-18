@@ -484,7 +484,7 @@ func PublishApi(tempAPI TempApi) (gin.H, error) {
 			"strip_listen_path": true
 		},
 		"CORS": {
-			"enable": false,
+			"enable": true,
 			"allowed_origins": [
 				"*"
 			],
@@ -565,7 +565,7 @@ func PublishApi(tempAPI TempApi) (gin.H, error) {
 				"strip_listen_path": true
 			},
 			"CORS": {
-				"enable": false,
+				"enable": true,
 				"allowed_origins": [
 					"*"
 				],
