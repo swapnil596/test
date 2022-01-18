@@ -776,6 +776,63 @@ func UnPublishApi(apiID string) (string, error) {
 	return "API unpublished successfully", nil
 }
 
+func InvalidateCache(apiID string) (string, error) {
+	var db, errdb = config.Connectdb()
+	if errdb != nil {
+		return "", errdb
+	}
+	defer db.Close()
+
+	// tyk := "http://localhost:8080"
+	// tykAuthToken := "foo"
+	tyk := "http://20.127.41.143:8080"
+	url := fmt.Sprintf("%s/tyk/cache/%s", tyk, apiID)
+	tykAuthToken := "352d20ee67be67f6340b4c0605b044b7"
+
+	var reqBody = []byte("")
+	req, err := http.NewRequest("DELETE", url, bytes.NewBuffer(reqBody))
+	req.Header.Set("x-tyk-authorization", tykAuthToken)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	// if resp.StatusCode != 200 {
+	// 	return "", err
+	// }
+
+	// req, err = http.NewRequest("GET", reloadUrl, bytes.NewBuffer(reqBody))
+	// req.Header.Set("x-tyk-authorization", tykAuthToken)
+
+	// client = &http.Client{}
+	// resp, err = client.Do(req)
+	// if err != nil {
+	// 	return "", err
+	// }
+	// defer resp.Body.Close()
+
+	// if resp.StatusCode != 200 {
+	// 	return "", err
+	// }
+
+	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET cache_timeout=?, modified_by=?, modified_date=? WHERE id=?;")
+	if err != nil {
+		return "", err
+	}
+	defer stmt.Close()
+
+	currentTime := time.Now()
+	_, err = stmt.Exec("0", "", currentTime.Format("2006-01-02"), apiID)
+	if err != nil {
+		return "", err
+	}
+
+	return "Cache invalidated successfully", nil
+}
+
 func GetApiDetails(id string) (map[string]interface{}, error) {
 	var db, errdb = config.Connectdb()
 

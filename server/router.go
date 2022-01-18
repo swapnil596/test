@@ -93,6 +93,7 @@ func NewRouter() *gin.Engine {
 
 		APIGroup.POST("/registration/api/publish/:id", apis.Publish)
 		APIGroup.POST("/registration/api/unpublish/:id", apis.UnPublish)
+		APIGroup.POST("/registration/api/invalidate/:id", apis.CacheInvalidate)
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
