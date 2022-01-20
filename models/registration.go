@@ -286,7 +286,7 @@ func UpdateTykDetails(id string, tykuri string, rateLimit string, rateLimitPer s
 
 	defer db.Close()
 
-	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET tykuri=?, rate_limit=?, rate_limit_per=?, cache_timeout=?, throttle_interval=?, retries=?, url2=?, authkey=?, degree=?, modified_by=?, modified_date=? WHERE id=?;")
+	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET tykuri=?, rate_limit=?, rate_limit_per=?, cache_timeout=?, cache_by_header=?, throttle_interval=?, retries=?, url2=?, authkey=?, degree=?, modified_by=?, modified_date=? WHERE id=?;")
 
 	if err != nil {
 		return err
@@ -294,7 +294,7 @@ func UpdateTykDetails(id string, tykuri string, rateLimit string, rateLimitPer s
 	defer stmt.Close()
 
 	currentTime := time.Now()
-	_, err = stmt.Exec(tykuri, rateLimit, rateLimitPer, cacheTimeout, throttle_interval, retries, url2, authkey, 1, "", currentTime.Format("2006-01-02"), id)
+	_, err = stmt.Exec(tykuri, rateLimit, rateLimitPer, cacheTimeout, cacheByHeader, throttle_interval, retries, url2, authkey, 1, "", currentTime.Format("2006-01-02"), id)
 
 	if err != nil {
 		return err
@@ -852,10 +852,11 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 	var headers, url, method, request, response, query_params, rate_limit, rate_limit_per, cache_timeout, throttle_interval, retries, url2, tykurl, auth_token sql.NullString
 	var name string
 	var degree int
+	var cache_by_header bool
 	data_json := make(map[string]string)
 
-	row := db.QueryRow("SELECT id, name, headers, url, method, request, response, query_params, rate_limit, rate_limit_per, cache_timeout, throttle_interval, retries, url2, degree, tykuri, authkey FROM db_flowxpert.abhic_api_registration WHERE id=?;", id)
-	err := row.Scan(&id, &name, &headers, &url, &method, &request, &response, &query_params, &rate_limit, &rate_limit_per, &cache_timeout, &throttle_interval, &retries, &url2, &degree, &tykurl, &auth_token)
+	row := db.QueryRow("SELECT id, name, headers, url, method, request, response, query_params, rate_limit, rate_limit_per, cache_timeout, cache_by_header, throttle_interval, retries, url2, degree, tykuri, authkey FROM db_flowxpert.abhic_api_registration WHERE id=?;", id)
+	err := row.Scan(&id, &name, &headers, &url, &method, &request, &response, &query_params, &rate_limit, &rate_limit_per, &cache_timeout, &cache_by_header, &throttle_interval, &retries, &url2, &degree, &tykurl, &auth_token)
 
 	data_json["name"] = name
 
@@ -924,6 +925,7 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 		"degree":            degree,
 		"tykurl":            tykurl.String,
 		"auth_token":        auth_token.String,
+		"cache_by_header":   cache_by_header,
 	}
 
 	switch {
