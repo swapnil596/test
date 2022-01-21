@@ -3,6 +3,7 @@ package server
 import (
 	"api-registration-backend/common"
 	"api-registration-backend/controllers/apis"
+	"api-registration-backend/log"
 	"net/http"
 	"reflect"
 	"strings"
@@ -31,6 +32,8 @@ func NewRouter() *gin.Engine {
 
 	// Recovery middleware recovers from any panics and writes a 500 if there is one.
 	router.Use(gin.Recovery())
+
+	router.Use(log.CentralLoggingMiddleware())
 
 	// For CORS
 	router.Use(func(ctx *gin.Context) {

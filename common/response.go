@@ -1,8 +1,9 @@
 package common
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type JSONSuccessResult struct {
@@ -68,6 +69,7 @@ func FailResponse(ctx *gin.Context, respCode int, message string, data interface
 			Data:    data,
 			Message: message,
 		})
+		return
 	}
 
 	ctx.JSON(respCode, JSONBadReqResult{
