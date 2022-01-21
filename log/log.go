@@ -2,7 +2,10 @@ package log
 
 import (
 	"api-registration-backend/common"
-	"log"
+	"bytes"
+	"fmt"
+	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -21,12 +24,12 @@ func CentralLoggingMiddleware() gin.HandlerFunc {
 		duration := common.GetDurationInMillseconds(start)
 
 		logData := map[string]interface{}{
-			"client_ip": c.ClientIP(),
-			"duration":  duration,
-			"method":    c.Request.Method,
-			"path":      c.Request.RequestURI,
-			"status":    c.Writer.Status(),
-			"referrer":  c.Request.Referer(),
+			// "client_ip": c.ClientIP(),
+			"duration":     duration,
+			"method":       c.Request.Method,
+			"url":          c.Request.RequestURI,
+			"responsecode": strconv.Itoa(c.Writer.Status()),
+			// "referrer":  c.Request.Referer(),
 		}
 
 		if c.Writer.Status() >= 500 {
@@ -40,6 +43,15 @@ func CentralLoggingMiddleware() gin.HandlerFunc {
 		}
 
 		// TODO: send the payload to the centralized logging service
-		log.Print(logData)
+		loggingServiceUrl := "http://localhost:8087/api/v1/log"
+		reqBody := []byte(fmt.Sprint(logData))
+		req, _ := http.NewRequest("POST", loggingServiceUrl, bytes.NewBuffer(reqBody))
+		client := &http.Client{}
+		resp, err := client.Do(req)
+
+		if err != nil {
+			defer resp.Body.Close()
+		}
+
 	}
 }
