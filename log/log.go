@@ -22,29 +22,38 @@ func CentralLoggingMiddleware() gin.HandlerFunc {
 
 		// Stop timer
 		duration := common.GetDurationInMillseconds(start)
-
-		logData := map[string]interface{}{
-			// "client_ip": c.ClientIP(),
-			"duration":     duration,
-			"method":       c.Request.Method,
-			"url":          c.Request.RequestURI,
-			"responsecode": strconv.Itoa(c.Writer.Status()),
-			// "referrer":  c.Request.Referer(),
-		}
+		reqBody := []byte("")
 
 		if c.Writer.Status() >= 500 {
 			// server error
-			logData["message"] = "Server error"
+			reqBody = []byte(fmt.Sprintf(`{
+				"duration": "%s",
+				"method": "%s",
+				"url": "%s",
+				"responsecode": "%s",
+				"message": "Server error"
+			}`, duration.String(), c.Request.Method, c.Request.RequestURI, strconv.Itoa(c.Writer.Status())))
 		} else if c.Writer.Status() >= 400 && c.Writer.Status() < 500 {
 			// server successfully processed the request
-			logData["message"] = "Error"
+			reqBody = []byte(fmt.Sprintf(`{
+				"duration": "%s",
+				"method": "%s",
+				"url": "%s",
+				"responsecode": "%s",
+				"message": "Error"
+			}`, duration.String(), c.Request.Method, c.Request.RequestURI, strconv.Itoa(c.Writer.Status())))
 		} else {
-			logData["message"] = "Success"
+			reqBody = []byte(fmt.Sprintf(`{
+				"duration": "%s",
+				"method": "%s",
+				"url": "%s",
+				"responsecode": "%s",
+				"message": "Success"
+			}`, duration.String(), c.Request.Method, c.Request.RequestURI, strconv.Itoa(c.Writer.Status())))
 		}
 
 		// TODO: send the payload to the centralized logging service
 		loggingServiceUrl := "http://localhost:8087/api/v1/log"
-		reqBody := []byte(fmt.Sprint(logData))
 		req, _ := http.NewRequest("POST", loggingServiceUrl, bytes.NewBuffer(reqBody))
 		client := &http.Client{}
 		resp, err := client.Do(req)
