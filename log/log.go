@@ -53,7 +53,7 @@ func CentralLoggingMiddleware() gin.HandlerFunc {
 		}
 
 		// TODO: send the payload to the centralized logging service
-		loggingServiceUrl := "http://localhost:8087/api/v1/log"
+		loggingServiceUrl := "http://13.90.25.178:8087/api/v1/log"
 		req, _ := http.NewRequest("POST", loggingServiceUrl, bytes.NewBuffer(reqBody))
 		client := &http.Client{}
 		resp, err := client.Do(req)
