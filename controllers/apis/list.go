@@ -1,7 +1,9 @@
 package apis
 
 import (
+	"api-registration-backend/common"
 	"api-registration-backend/models"
+	"api-registration-backend/validations"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,8 +26,8 @@ func ListConstruct(ctx *gin.Context) {
 	page_s := ctx.Request.URL.Query().Get("page")
 
 	user, err := models.ListAllApis(enable, disable, draft, page_s)
-
 	if err != nil {
+		common.FailResponse(ctx, http.StatusInternalServerError, "Error", gin.H{"errors": validations.ValidateErrors(err)})
 		return
 	}
 	ctx.JSON(http.StatusOK, user)
