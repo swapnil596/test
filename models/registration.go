@@ -230,7 +230,7 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 	response_link, err := azure.UploadBytesToBlob([]byte(updateapi.Response.String))
 	query_params_link, err := azure.UploadBytesToBlob([]byte(updateapi.QueryParams.String))
 
-	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET url=?, method=?, headers=?, request=?, response=?, query_params=?, rate_limit=?, rate_limit_per=?, cache_timeout=?, cache_by_header=?, throttle_interval=?, retries=?, url2=?, modified_by=?, modified_date=? WHERE id=?;")
+	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET url=?, method=?, headers=?, request=?, response=?, query_params=?, rate_limit=?, rate_limit_per=?, cache_timeout=?, cache_by_header=?, throttle_interval=?, retries=?, url2=?, authtype=?, username=?, password=?, modified_by=?, modified_date=? WHERE id=?;")
 
 	if err != nil {
 		return err
@@ -244,7 +244,7 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 	updateapi.CacheTimeout.String = strconv.Itoa((cache * 60))
 
 	currentTime := time.Now()
-	_, err = stmt.Exec(updateapi.Url, updateapi.Method, headers_link, request_link, response_link, query_params_link, updateapi.RateLimit.String, updateapi.RateLimitPer.String, updateapi.CacheTimeout.String, updateapi.CacheByHeader, updateapi.Interval.String, updateapi.Retries.String, updateapi.Url2.String, "", currentTime.Format("2006-01-02"), id)
+	_, err = stmt.Exec(updateapi.Url, updateapi.Method, headers_link, request_link, response_link, query_params_link, updateapi.RateLimit.String, updateapi.RateLimitPer.String, updateapi.CacheTimeout.String, updateapi.CacheByHeader, updateapi.Interval.String, updateapi.Retries.String, updateapi.Url2.String, updateapi.AuthType, updateapi.Username.String, updateapi.Password.String, "", currentTime.Format("2006-01-02"), id)
 
 	if err != nil {
 		return err
@@ -278,7 +278,7 @@ func UpdateName(id string, name string) error {
 	return nil
 }
 
-func UpdateTykDetails(id string, tykuri string, rateLimit string, rateLimitPer string, cacheTimeout string, throttle_interval string, retries string, url2 string, authkey string, cacheByHeader bool) error {
+func UpdateTykDetails(id string, tykuri string, rateLimit string, rateLimitPer string, cacheTimeout string, throttle_interval string, retries string, url2 string, authkey string, cacheByHeader bool, authtype int, username string, password string) error {
 	var db, errdb = config.Connectdb()
 	if errdb != nil {
 		return errdb
@@ -286,7 +286,7 @@ func UpdateTykDetails(id string, tykuri string, rateLimit string, rateLimitPer s
 
 	defer db.Close()
 
-	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET tykuri=?, rate_limit=?, rate_limit_per=?, cache_timeout=?, cache_by_header=?, throttle_interval=?, retries=?, url2=?, authkey=?, degree=?, modified_by=?, modified_date=? WHERE id=?;")
+	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET tykuri=?, rate_limit=?, rate_limit_per=?, cache_timeout=?, cache_by_header=?, throttle_interval=?, retries=?, url2=?, authkey=?, authtype=?, username=?, password=?, degree=?, modified_by=?, modified_date=? WHERE id=?;")
 
 	if err != nil {
 		return err
@@ -294,7 +294,7 @@ func UpdateTykDetails(id string, tykuri string, rateLimit string, rateLimitPer s
 	defer stmt.Close()
 
 	currentTime := time.Now()
-	_, err = stmt.Exec(tykuri, rateLimit, rateLimitPer, cacheTimeout, cacheByHeader, throttle_interval, retries, url2, authkey, 1, "", currentTime.Format("2006-01-02"), id)
+	_, err = stmt.Exec(tykuri, rateLimit, rateLimitPer, cacheTimeout, cacheByHeader, throttle_interval, retries, url2, authkey, authtype, username, password, 1, "", currentTime.Format("2006-01-02"), id)
 
 	if err != nil {
 		return err
@@ -394,6 +394,20 @@ func PublishApi(tempAPI TempApi) (gin.H, error) {
 		useKeyless = "false"
 	}
 
+	basic_auth := fmt.Sprintf(`"use_basic_auth": false,`)
+	basic_auth_data := ""
+
+	switch tempAPI.AuthType {
+	case 1:
+		// basic cauthentication
+		keysCreateUrl = fmt.Sprintf("%s/tyk/keys/%s", tyk, tempAPI.Username)
+		basic_auth = fmt.Sprintf(`"use_basic_auth": true,`)
+		basic_auth_data = fmt.Sprintf(`,
+		"basic_auth_data": {
+			"password": "%s"
+		}`, tempAPI.Password)
+	}
+
 	versionData := fmt.Sprintf(`"version_data": {
 		"not_versioned": true,
 		"default_version": "Default",
@@ -484,6 +498,7 @@ func PublishApi(tempAPI TempApi) (gin.H, error) {
 			"strip_path": false
 		},
 		%s
+		%s
 		"proxy": {
 			"listen_path": "%s",
 			"target_url": "%s",
@@ -527,7 +542,7 @@ func PublishApi(tempAPI TempApi) (gin.H, error) {
 			"cache_by_headers": []
 		},
 		"active": true
-	}`, name, apiId, useKeyless, versionData, listenPath, endpoint, tempAPI.RateLimit, tempAPI.RateLimitPer, tempAPI.CacheTimeout, enableCache, enableCacheByHeader)
+	}`, name, apiId, useKeyless, versionData, basic_auth, listenPath, endpoint, tempAPI.RateLimit, tempAPI.RateLimitPer, tempAPI.CacheTimeout, enableCache, enableCacheByHeader)
 
 	if strings.Contains(listenPath, "{") {
 		urlComponents := strings.Split(listenPath, "/")
@@ -556,6 +571,7 @@ func PublishApi(tempAPI TempApi) (gin.H, error) {
 				"key": "x-api-version",
 				"strip_path": false
 			},
+			%s
 			%s
 			"url_rewrites": [
 				{
@@ -608,7 +624,7 @@ func PublishApi(tempAPI TempApi) (gin.H, error) {
 				"cache_by_headers": []
 			},
 			"active": true
-		}`, name, apiId, useKeyless, versionData, listenPath, rewrite_to, listenPath, endpoint, tempAPI.RateLimit, tempAPI.RateLimitPer, tempAPI.CacheTimeout, enableCache, enableCacheByHeader)
+		}`, name, apiId, useKeyless, versionData, basic_auth, listenPath, rewrite_to, listenPath, endpoint, tempAPI.RateLimit, tempAPI.RateLimitPer, tempAPI.CacheTimeout, enableCache, enableCacheByHeader)
 	}
 
 	// reqBody should contain the payload for tyk
@@ -650,7 +666,7 @@ func PublishApi(tempAPI TempApi) (gin.H, error) {
 
 	var keyResponse KeyResponse
 
-	if tempAPI.Retries != "-1" || tempAPI.Interval != "-1" {
+	if tempAPI.Retries != "-1" || tempAPI.Interval != "-1" || tempAPI.Password != "" {
 		// set retries and ratelimit via /keys/create
 		keysPayload := fmt.Sprintf(`{
 			"rate": %s,
@@ -667,8 +683,8 @@ func PublishApi(tempAPI TempApi) (gin.H, error) {
 					"limit": null,
 					"allowance_scope": ""
 				}
-			}
-		}`, tempAPI.RateLimit, tempAPI.RateLimitPer, tempAPI.Interval, tempAPI.Retries, apiId, name, apiId, versions)
+			}%s
+		}`, tempAPI.RateLimit, tempAPI.RateLimitPer, tempAPI.Interval, tempAPI.Retries, apiId, name, apiId, versions, basic_auth_data)
 
 		reqBody = []byte(keysPayload)
 		req, err = http.NewRequest("POST", keysCreateUrl, bytes.NewBuffer(reqBody))
@@ -689,7 +705,7 @@ func PublishApi(tempAPI TempApi) (gin.H, error) {
 	}
 
 	tykuri := fmt.Sprintf("%s%s", tyk, listenPath)
-	err = UpdateTykDetails(tempAPI.Id, tykuri, tempAPI.RateLimit, tempAPI.RateLimitPer, tempAPI.CacheTimeout, tempAPI.Interval, tempAPI.Retries, tempAPI.Url2, keyResponse.Key, tempAPI.CacheByHeader)
+	err = UpdateTykDetails(tempAPI.Id, tykuri, tempAPI.RateLimit, tempAPI.RateLimitPer, tempAPI.CacheTimeout, tempAPI.Interval, tempAPI.Retries, tempAPI.Url2, keyResponse.Key, tempAPI.CacheByHeader, tempAPI.AuthType, tempAPI.Username, tempAPI.Password)
 	if err != nil {
 		return gin.H{"url": "", "authKey": ""}, err
 	}
@@ -849,14 +865,14 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 	}
 	defer db.Close()
 
-	var headers, url, method, request, response, query_params, rate_limit, rate_limit_per, cache_timeout, throttle_interval, retries, url2, tykurl, auth_token sql.NullString
+	var headers, url, method, request, response, query_params, rate_limit, rate_limit_per, cache_timeout, throttle_interval, retries, url2, tykurl, auth_token, username, password sql.NullString
 	var name string
-	var degree int
+	var degree, authtype int
 	var cache_by_header bool
 	data_json := make(map[string]string)
 
-	row := db.QueryRow("SELECT id, name, headers, url, method, request, response, query_params, rate_limit, rate_limit_per, cache_timeout, cache_by_header, throttle_interval, retries, url2, degree, tykuri, authkey FROM db_flowxpert.abhic_api_registration WHERE id=?;", id)
-	err := row.Scan(&id, &name, &headers, &url, &method, &request, &response, &query_params, &rate_limit, &rate_limit_per, &cache_timeout, &cache_by_header, &throttle_interval, &retries, &url2, &degree, &tykurl, &auth_token)
+	row := db.QueryRow("SELECT id, name, headers, url, method, request, response, query_params, rate_limit, rate_limit_per, cache_timeout, cache_by_header, throttle_interval, retries, url2, degree, tykuri, authkey, authtype, username, password FROM db_flowxpert.abhic_api_registration WHERE id=?;", id)
+	err := row.Scan(&id, &name, &headers, &url, &method, &request, &response, &query_params, &rate_limit, &rate_limit_per, &cache_timeout, &cache_by_header, &throttle_interval, &retries, &url2, &degree, &tykurl, &auth_token, &authtype, &username, &password)
 
 	data_json["name"] = name
 
@@ -926,6 +942,9 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 		"tykurl":            tykurl.String,
 		"auth_token":        auth_token.String,
 		"cache_by_header":   cache_by_header,
+		"authtype":          authtype,
+		"username":          username.String,
+		"password":          password.String,
 	}
 
 	switch {

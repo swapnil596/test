@@ -25,6 +25,9 @@ type (
 		Url2          sql.NullString `json:"url2"`
 		AuthKey       sql.NullString `json:"authkey"`
 		CacheByHeader bool           `json:"cache_by_header"`
+		AuthType      int            `json:"authtype" form:"authtype"`
+		Username      sql.NullString `json:"username"`
+		Password      sql.NullString `json:"password"`
 		Degree        int            `json:"degree" form:"degree"`
 		CreatedBy     string         `json:"created_by" form:"created_by"`
 		CreatedDate   string         `json:"created_date" form:"created_date"`
@@ -54,6 +57,9 @@ type (
 		Url2          string                 `json:"url2"`
 		AuthKey       string                 `json:"authkey"`
 		CacheByHeader bool                   `json:"cache_by_header"`
+		AuthType      int                    `json:"authtype" form:"authtype"`
+		Username      string                 `json:"username"`
+		Password      string                 `json:"password"`
 		Degree        int                    `json:"degree" form:"degree"`
 		Active        bool                   `json:"active" form:"active"`
 		CreatedBy     string                 `json:"created_by" form:"created_by"`
