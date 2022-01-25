@@ -5,6 +5,7 @@ import (
 	"api-registration-backend/models"
 	"api-registration-backend/validations"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,6 +31,12 @@ func OverhaulName(ctx *gin.Context) {
 	if err := ctx.BindJSON(&updateapi); err != nil {
 		common.FailResponse(ctx, http.StatusBadRequest, "Error",
 			gin.H{"errors": validations.ValidateErrors(err)})
+		return
+	}
+
+	if strings.TrimSpace(updateapi.Name) == "" {
+		common.FailResponse(ctx, http.StatusInternalServerError, "Error",
+			gin.H{"errors": "Name cannot be null"})
 		return
 	}
 

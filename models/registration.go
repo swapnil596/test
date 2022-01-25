@@ -756,7 +756,7 @@ func UnPublishApi(apiID string) (string, error) {
 	// 	return "", err
 	// }
 
-	var key string
+	var key sql.NullString
 
 	row := db.QueryRow("SELECT authkey FROM db_flowxpert.abhic_api_registration WHERE id=?", apiID)
 	err = row.Scan(&key)
@@ -764,8 +764,8 @@ func UnPublishApi(apiID string) (string, error) {
 		return "", err
 	}
 
-	if key != "" {
-		keysDeleteUrl := fmt.Sprintf("%s/tyk/keys/%s", tyk, key)
+	if key.String != "" {
+		keysDeleteUrl := fmt.Sprintf("%s/tyk/keys/%s", tyk, key.String)
 
 		var reqBody = []byte("")
 		req, err := http.NewRequest("DELETE", keysDeleteUrl, bytes.NewBuffer(reqBody))
