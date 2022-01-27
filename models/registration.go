@@ -5,6 +5,7 @@ import (
 	"api-registration-backend/config"
 	"bytes"
 	"database/sql"
+	b64 "encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -705,6 +706,12 @@ func PublishApi(tempAPI TempApi) (gin.H, error) {
 	}
 
 	tykuri := fmt.Sprintf("%s%s", tyk, listenPath)
+
+	if tempAPI.Username != "" && tempAPI.Password != "" {
+		data := fmt.Sprintf("%s:%s", tempAPI.Username, tempAPI.Password)
+		keyResponse.Key = b64.StdEncoding.EncodeToString([]byte(data))
+	}
+
 	err = UpdateTykDetails(tempAPI.Id, tykuri, tempAPI.RateLimit, tempAPI.RateLimitPer, tempAPI.CacheTimeout, tempAPI.Interval, tempAPI.Retries, tempAPI.Url2, keyResponse.Key, tempAPI.CacheByHeader, tempAPI.AuthType, tempAPI.Username, tempAPI.Password)
 	if err != nil {
 		return gin.H{"url": "", "authKey": ""}, err
