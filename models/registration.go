@@ -542,6 +542,7 @@ func PublishApi(tempAPI TempApi) (gin.H, error) {
 			"cache_control_ttl_header": "",
 			"cache_by_headers": []
 		},
+		"enable_detailed_recording": true,
 		"active": true
 	}`, name, apiId, useKeyless, versionData, basic_auth, listenPath, endpoint, tempAPI.RateLimit, tempAPI.RateLimitPer, tempAPI.CacheTimeout, enableCache, enableCacheByHeader)
 
@@ -624,6 +625,7 @@ func PublishApi(tempAPI TempApi) (gin.H, error) {
 				"cache_control_ttl_header": "",
 				"cache_by_headers": []
 			},
+			"enable_detailed_recording": true,
 			"active": true
 		}`, name, apiId, useKeyless, versionData, basic_auth, listenPath, rewrite_to, listenPath, endpoint, tempAPI.RateLimit, tempAPI.RateLimitPer, tempAPI.CacheTimeout, enableCache, enableCacheByHeader)
 	}
