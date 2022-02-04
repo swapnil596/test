@@ -147,7 +147,38 @@ func CopyApi(newuser ApiRegistration, id string) (error, ApiRegistration) {
 	}
 	uuid, _ := uuid.NewRandom()
 
-	_, err = stmt.Exec(uuid, newuser.ProjectId, newuser.Name, newuser.Version, newuser.CacheTimeout, newuser.Url, newuser.Method, newuser.Protocol, newuser.Headers, newuser.Request, newuser.Response, newuser.QueryParams, newuser.TykUri, newuser.RateLimit, newuser.RateLimitPer, newuser.Interval, newuser.Retries, newuser.Url2, newuser.AuthKey, newuser.Degree, newuser.CreatedBy, newuser.CreatedDate, newuser.ModifiedBy, newuser.ModifiedDate, newuser.Active)
+	var headers, request, response, query_params string
+
+	if !newuser.Headers.Valid {
+		headers = ""
+	} else {
+		headers, err = azure.GetBlobData(newuser.Headers.String)
+	}
+
+	if !newuser.Request.Valid {
+		request = ""
+	} else {
+		request, err = azure.GetBlobData(newuser.Request.String)
+	}
+
+	if !newuser.Response.Valid {
+		response = ""
+	} else {
+		response, err = azure.GetBlobData(newuser.Response.String)
+	}
+
+	if !newuser.QueryParams.Valid {
+		query_params = ""
+	} else {
+		query_params, err = azure.GetBlobData(newuser.QueryParams.String)
+	}
+
+	headers_link, err := azure.UploadBytesToBlob([]byte(headers))
+	request_link, err := azure.UploadBytesToBlob([]byte(request))
+	response_link, err := azure.UploadBytesToBlob([]byte(response))
+	query_params_link, err := azure.UploadBytesToBlob([]byte(query_params))
+
+	_, err = stmt.Exec(uuid, newuser.ProjectId, newuser.Name, newuser.Version, newuser.CacheTimeout, newuser.Url, newuser.Method, newuser.Protocol, headers_link, request_link, response_link, query_params_link, newuser.TykUri, newuser.RateLimit, newuser.RateLimitPer, newuser.Interval, newuser.Retries, newuser.Url2, newuser.AuthKey, newuser.Degree, newuser.CreatedBy, newuser.CreatedDate, newuser.ModifiedBy, newuser.ModifiedDate, newuser.Active)
 	if err != nil {
 		return err, newuser
 	}
