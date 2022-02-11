@@ -21,8 +21,10 @@ import (
 // @Router       /registration/api/{id} [get]
 func GetDetails(ctx *gin.Context) {
 	id := ctx.Param("id")
+	journey_id := ctx.Request.URL.Query().Get("journey_id")
+	delete_id := ctx.Request.URL.Query().Get("delete_id")
 
-	reg, err := models.GetApiDetails(id)
+	reg, err := models.GetApiDetails(id, journey_id, delete_id)
 
 	if err != nil {
 		common.FailResponse(ctx, http.StatusInternalServerError, "Error", gin.H{"errors": validations.ValidateErrors(err)})

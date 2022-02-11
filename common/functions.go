@@ -1,10 +1,14 @@
 package common
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"encoding/base64"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -41,4 +45,22 @@ func GetDurationInMillseconds(start time.Time) time.Duration {
 	// milliseconds := float64(duration) / float64(time.Millisecond)
 	// rounded := float64(int(milliseconds*100+.5)) / 100
 	return duration
+}
+
+// for decrypting AES encrypted data
+func Decrypt(encrypted string) (string, error) {
+	key := []byte("$think@360@FlowX")
+	cipherText, _ := base64.StdEncoding.DecodeString(encrypted)
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		panic(err)
+	}
+
+	iv := key
+	cipherText = cipherText[:]
+	mode := cipher.NewCTR(block, iv)
+	mode.XORKeyStream(cipherText, cipherText)
+
+	return strings.Trim(fmt.Sprintf("%s", cipherText), "\n"), nil
 }

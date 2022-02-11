@@ -2,6 +2,7 @@ package models
 
 import (
 	"api-registration-backend/azure"
+	"api-registration-backend/common"
 	"api-registration-backend/config"
 	"bytes"
 	"database/sql"
@@ -207,6 +208,94 @@ func CreateApi(regs ApiRegistration) (string, error) {
 	return uuid.String(), err
 }
 
+func UpdateJourneys(apiid string, url string, method string, headers string, request string, response string, queryparams string) error {
+	var db, errdb = config.Connectdb()
+	if errdb != nil {
+		return errdb
+	}
+	defer db.Close()
+
+	rows, err := db.Query("SELECT journey_id FROM apis_journeys WHERE form_id=?", apiid)
+	if err != nil {
+		return err
+	}
+
+	for rows.Next() {
+		var journey_id string
+		rows.Scan(&journey_id)
+
+		// delete old entries from azure
+		var old_data_url sql.NullString
+		var data string
+		var json_data map[string]interface{}
+		row := db.QueryRow("SELECT data FROM journeys WHERE id=?", journey_id)
+		err := row.Scan(&old_data_url)
+		if err != nil {
+			return err
+		}
+
+		// get old journey data from blob
+		if old_data_url.Valid {
+			data, err = azure.GetBlobData(old_data_url.String)
+			if err != nil {
+				return err
+			}
+		}
+
+		// decrypt data
+		data, err = common.Decrypt(data)
+		if err != nil {
+			return err
+		}
+
+		json.Unmarshal([]byte(data), &json_data)
+
+		// update the form data in old journey data
+		screenFormData := json_data["apiFormData"].([]interface{})
+
+		for _, element := range screenFormData {
+			for key, val := range element.(map[string]interface{}) {
+				if key == apiid {
+					val.(map[string]interface{})["url"] = url
+					val.(map[string]interface{})["method"] = method
+					val.(map[string]interface{})["headers"] = headers
+					val.(map[string]interface{})["requestBody"] = request
+					val.(map[string]interface{})["responseBody"] = response
+					val.(map[string]interface{})["queryparameters"] = queryparams
+				}
+			}
+		}
+
+		json_data["apiFormData"] = screenFormData
+
+		// create new entries into azure
+		new_data_bytes, _ := json.Marshal(json_data)
+		data_link, err := azure.UploadBytesToBlob(new_data_bytes)
+
+		stmt, err := db.Prepare("UPDATE journeys SET data=?, modified_by=?, modified_date=? WHERE id=?;")
+
+		if err != nil {
+			return err
+		}
+
+		defer stmt.Close()
+
+		currentTime := time.Now()
+		_, err = stmt.Exec(data_link, "API Updated", currentTime.Format("2006-01-02"), journey_id)
+
+		if err != nil {
+			return err
+		}
+
+		if old_data_url.Valid {
+			_, err = azure.DeleteBlobData(old_data_url.String)
+		}
+
+	}
+
+	return nil
+}
+
 func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 	var db, errdb = config.Connectdb()
 
@@ -281,6 +370,9 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 	if err != nil {
 		return err
 	}
+
+	// Update all the journeys where this api is in use
+	go UpdateJourneys(id, updateapi.Url.String, updateapi.Method.String, updateapi.Headers.String, updateapi.Request.String, updateapi.Response.String, updateapi.QueryParams.String)
 
 	return nil
 }
@@ -895,7 +987,7 @@ func InvalidateCache(apiID string) (string, error) {
 	return "Cache invalidated successfully", nil
 }
 
-func GetApiDetails(id string) (map[string]interface{}, error) {
+func GetApiDetails(id string, journey_id string, delete_id string) (map[string]interface{}, error) {
 	var db, errdb = config.Connectdb()
 
 	var reg map[string]interface{}
@@ -904,6 +996,24 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 		return reg, errdb
 	}
 	defer db.Close()
+
+	if delete_id != "" {
+		stmt, err := db.Prepare("DELETE FROM apis_journeys WHERE api_id=? AND journey_id=?;")
+		if err != nil {
+			return reg, err
+		}
+
+		defer stmt.Close()
+
+		_, err = stmt.Exec(id, journey_id)
+		if err != nil {
+			return reg, err
+		}
+
+		reg["message"] = "API successfully disassociated from this journey"
+
+		return reg, nil
+	}
 
 	var headers, url, method, request, response, query_params, rate_limit, rate_limit_per, cache_timeout, throttle_interval, retries, url2, tykurl, auth_token, username, password sql.NullString
 	var name string
@@ -993,6 +1103,18 @@ func GetApiDetails(id string) (map[string]interface{}, error) {
 	case err != nil:
 		return reg, err
 	default:
+		if journey_id != "" {
+			stmt, err := db.Prepare("INSERT INTO apis_journeys (api_id, journey_id) VALUES (?, ?);")
+			if err != nil {
+				return reg, err
+			}
+			defer stmt.Close()
+
+			_, err = stmt.Exec(id, journey_id)
+			if err != nil {
+				return reg, err
+			}
+		}
 		return reg, nil
 	}
 }
