@@ -104,7 +104,6 @@ func DeleteApi(id string) error {
 	defer db.Close()
 
 	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET active=0 WHERE id=?;")
-
 	if err != nil {
 		return err
 	}
@@ -115,7 +114,20 @@ func DeleteApi(id string) error {
 	if err != nil {
 		return err
 	}
+
 	rows_affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	stmt, err = db.Prepare("DELETE FROM apis_journeys WHERE api_id=?;")
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
 	if err != nil {
 		return err
 	}
