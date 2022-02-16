@@ -1002,7 +1002,7 @@ func InvalidateCache(apiID string) (string, error) {
 func GetApiDetails(id string, journey_id string, delete_id string) (map[string]interface{}, error) {
 	var db, errdb = config.Connectdb()
 
-	var reg map[string]interface{}
+	reg := make(map[string]interface{})
 
 	if errdb != nil {
 		return reg, errdb
