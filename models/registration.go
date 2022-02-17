@@ -73,6 +73,7 @@ func ListAllApis(enable string, disable string, draft string, page_s string) ([]
 	if err != nil {
 		return users, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var version, name, id, protocol string
@@ -231,6 +232,7 @@ func UpdateJourneys(apiid string, url string, method string, headers string, req
 	if err != nil {
 		return err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var journey_id string
@@ -285,11 +287,9 @@ func UpdateJourneys(apiid string, url string, method string, headers string, req
 		data_link, err := azure.UploadBytesToBlob(new_data_bytes)
 
 		stmt, err := db.Prepare("UPDATE journeys SET data=?, modified_by=?, modified_date=? WHERE id=?;")
-
 		if err != nil {
 			return err
 		}
-
 		defer stmt.Close()
 
 		currentTime := time.Now()
@@ -449,11 +449,9 @@ func PermaDeleteApi(id string) error {
 	defer db.Close()
 
 	stmt, err := db.Prepare("DELETE FROM db_flowxpert.abhic_api_registration WHERE id=?;")
-
 	if err != nil {
 		return err
 	}
-
 	defer stmt.Close()
 
 	result, err := stmt.Exec(id)
