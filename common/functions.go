@@ -48,6 +48,24 @@ func GetDurationInMillseconds(start time.Time) time.Duration {
 }
 
 // for decrypting AES encrypted data
+func Encrypt(text string) (string, error) {
+	key := []byte("$think@360@FlowX")
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
+
+	ciphertext := make([]byte, len([]byte(text)))
+	iv := key
+
+	cfb := cipher.NewCTR(block, iv)
+	cfb.XORKeyStream(ciphertext[:], []byte(text))
+
+	b := base64.StdEncoding.EncodeToString(ciphertext)
+
+	return strings.Trim(fmt.Sprintf("%s", b), "\n"), nil
+}
+
 func Decrypt(encrypted string) (string, error) {
 	key := []byte("$think@360@FlowX")
 	cipherText, _ := base64.StdEncoding.DecodeString(encrypted)

@@ -256,31 +256,28 @@ func UpdateJourneys(apiid string, url string, method string, headers string, req
 			}
 		}
 
-		// decrypt data
-		data, err = common.Decrypt(data)
+		json.Unmarshal([]byte(data), &json_data)
+
+		// update the form data in old journey data
+		newApiFormData := []map[string]string{
+			{
+				"url":             url,
+				"method":          method,
+				"headers":         headers,
+				"requestBody":     request,
+				"responseBody":    response,
+				"queryparameters": queryparams,
+			},
+		}
+
+		// encrypt data
+		b_data, _ := json.Marshal(newApiFormData)
+		data, err = common.Encrypt(string(b_data))
 		if err != nil {
 			return err
 		}
 
-		json.Unmarshal([]byte(data), &json_data)
-
-		// update the form data in old journey data
-		screenFormData := json_data["apiFormData"].([]interface{})
-
-		for _, element := range screenFormData {
-			for key, val := range element.(map[string]interface{}) {
-				if key == apiid {
-					val.(map[string]interface{})["url"] = url
-					val.(map[string]interface{})["method"] = method
-					val.(map[string]interface{})["headers"] = headers
-					val.(map[string]interface{})["requestBody"] = request
-					val.(map[string]interface{})["responseBody"] = response
-					val.(map[string]interface{})["queryparameters"] = queryparams
-				}
-			}
-		}
-
-		json_data["apiFormData"] = screenFormData
+		json_data["apiFormData"] = data
 
 		// create new entries into azure
 		new_data_bytes, _ := json.Marshal(json_data)
