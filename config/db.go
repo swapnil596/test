@@ -22,7 +22,7 @@ func Connectdb() (*sql.DB, error) {
 	}
 
 	err := db.Ping()
-
+	db.SetMaxOpenConns(100)
 	return db, err
 }
 
