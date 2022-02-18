@@ -3,6 +3,7 @@ package config
 import (
 	"database/sql"
 	"os"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -22,7 +23,11 @@ func Connectdb() (*sql.DB, error) {
 	}
 
 	err := db.Ping()
-	db.SetMaxOpenConns(100)
+	db.SetMaxOpenConns(25)
+	db.SetMaxIdleConns(20)
+	db.SetConnMaxIdleTime(10 * time.Second)
+	db.SetConnMaxLifetime(5 * time.Minute)
+
 	return db, err
 }
 
