@@ -360,7 +360,7 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 	response_link, err := azure.UploadBytesToBlob([]byte(updateapi.Response.String))
 	query_params_link, err := azure.UploadBytesToBlob([]byte(updateapi.QueryParams.String))
 
-	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET url=?, method=?, headers=?, request=?, response=?, query_params=?, rate_limit=?, rate_limit_per=?, cache_timeout=?, cache_by_header=?, throttle_interval=?, retries=?, url2=?, authtype=?, username=?, password=?, modified_by=?, modified_date=? WHERE id=?;")
+	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET url=?, method=?, headers=?, request=?, response=?, query_params=?, rate_limit=?, rate_limit_per=?, cache_timeout=?, cache_by_header=?, throttle_interval=?, retries=?, url2=?, authtype=?, username=?, password=?, client_id=?, client_secret=?, token_server=?, token_endpoint=?, modified_by=?, modified_date=? WHERE id=?;")
 
 	if err != nil {
 		return err
@@ -374,7 +374,7 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 	updateapi.CacheTimeout.String = strconv.Itoa((cache * 60))
 
 	currentTime := time.Now()
-	_, err = stmt.Exec(updateapi.Url, updateapi.Method, headers_link, request_link, response_link, query_params_link, updateapi.RateLimit.String, updateapi.RateLimitPer.String, updateapi.CacheTimeout.String, updateapi.CacheByHeader, updateapi.Interval.String, updateapi.Retries.String, updateapi.Url2.String, updateapi.AuthType, updateapi.Username.String, updateapi.Password.String, "", currentTime.Format("2006-01-02"), id)
+	_, err = stmt.Exec(updateapi.Url, updateapi.Method, headers_link, request_link, response_link, query_params_link, updateapi.RateLimit.String, updateapi.RateLimitPer.String, updateapi.CacheTimeout.String, updateapi.CacheByHeader, updateapi.Interval.String, updateapi.Retries.String, updateapi.Url2.String, updateapi.AuthType, updateapi.Username.String, updateapi.Password.String, updateapi.ClientId.String, updateapi.ClientSecret.String, updateapi.TokenServer.String, updateapi.TokenEndpoint.String, "", currentTime.Format("2006-01-02"), id)
 
 	if err != nil {
 		return err

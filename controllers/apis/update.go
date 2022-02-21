@@ -95,6 +95,10 @@ func Overhaul(ctx *gin.Context) {
 	updateapi.AuthType = tempAPI.AuthType
 	updateapi.Username = sql.NullString{String: tempAPI.Username, Valid: true}
 	updateapi.Password = sql.NullString{String: tempAPI.Password, Valid: true}
+	updateapi.ClientId = sql.NullString{String: tempAPI.ClientId, Valid: true}
+	updateapi.ClientSecret = sql.NullString{String: tempAPI.ClientSecret, Valid: true}
+	updateapi.TokenServer = sql.NullString{String: tempAPI.TokenServer, Valid: true}
+	updateapi.TokenEndpoint = sql.NullString{String: tempAPI.TokenEndpoint, Valid: true}
 	updateapi.CacheByHeader = tempAPI.CacheByHeader
 
 	err = models.UpdateApi(updateapi, id, degree)
