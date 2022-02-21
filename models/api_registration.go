@@ -28,6 +28,10 @@ type (
 		AuthType      int            `json:"authtype" form:"authtype"`
 		Username      sql.NullString `json:"username"`
 		Password      sql.NullString `json:"password"`
+		ClientId      sql.NullString `json:"client_id"`
+		ClientSecret  sql.NullString `json:"client_secret"`
+		TokenServer   sql.NullString `json:"token_server"`
+		TokenEndpoint sql.NullString `json:"token_endpoint"`
 		Degree        int            `json:"degree" form:"degree"`
 		CreatedBy     string         `json:"created_by" form:"created_by"`
 		CreatedDate   string         `json:"created_date" form:"created_date"`
@@ -60,6 +64,10 @@ type (
 		AuthType      int                    `json:"authtype" form:"authtype"`
 		Username      string                 `json:"username"`
 		Password      string                 `json:"password"`
+		ClientId      string                 `json:"client_id"`
+		ClientSecret  string                 `json:"client_secret"`
+		TokenServer   string                 `json:"token_server"`
+		TokenEndpoint string                 `json:"token_endpoint"`
 		Degree        int                    `json:"degree" form:"degree"`
 		Active        bool                   `json:"active" form:"active"`
 		CreatedBy     string                 `json:"created_by" form:"created_by"`
