@@ -1012,24 +1012,6 @@ func GetApiDetails(id string, journey_id string, delete_id string) (map[string]i
 	}
 	defer db.Close()
 
-	if delete_id != "" {
-		stmt, err := db.Prepare("DELETE FROM apis_journeys WHERE api_id=? AND journey_id=?;")
-		if err != nil {
-			return reg, err
-		}
-
-		defer stmt.Close()
-
-		_, err = stmt.Exec(id, journey_id)
-		if err != nil {
-			return reg, err
-		}
-
-		reg["message"] = "API successfully disassociated from this journey"
-
-		return reg, nil
-	}
-
 	var headers, url, method, request, response, query_params, rate_limit, rate_limit_per, cache_timeout, throttle_interval, retries, url2, tykurl, auth_token, username, password, client_id, client_secret, token_server, token_endpoint sql.NullString
 	var name string
 	var degree, authtype int
@@ -1118,18 +1100,6 @@ func GetApiDetails(id string, journey_id string, delete_id string) (map[string]i
 	case err != nil:
 		return reg, err
 	default:
-		if journey_id != "" {
-			stmt, err := db.Prepare("INSERT INTO apis_journeys (api_id, journey_id) VALUES (?, ?);")
-			if err != nil {
-				return reg, err
-			}
-			defer stmt.Close()
-
-			_, err = stmt.Exec(id, journey_id)
-			if err != nil {
-				return reg, err
-			}
-		}
 		return reg, nil
 	}
 }
