@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -221,16 +222,16 @@ func CreateApi(regs ApiRegistration) (string, error) {
 	return uuid.String(), err
 }
 
-func UpdateJourneys(apiid string, url string, method string, headers string, request string, response string, queryparams string) error {
+func UpdateJourneys(apiid string, url string, method string, headers string, request string, response string, queryparams string) {
 	var db, errdb = config.Connectdb()
 	if errdb != nil {
-		return errdb
+		log.Print(errdb)
 	}
 	defer db.Close()
 
 	rows, err := db.Query("SELECT journey_id FROM apis_journeys WHERE form_id=?", apiid)
 	if err != nil {
-		return err
+		log.Print(err)
 	}
 	defer rows.Close()
 
@@ -245,14 +246,14 @@ func UpdateJourneys(apiid string, url string, method string, headers string, req
 		row := db.QueryRow("SELECT data FROM journeys WHERE id=?", journey_id)
 		err := row.Scan(&old_data_url)
 		if err != nil {
-			return err
+			log.Print(err)
 		}
 
 		// get old journey data from blob
 		if old_data_url.Valid {
 			data, err = azure.GetBlobData(old_data_url.String)
 			if err != nil {
-				return err
+				log.Print(err)
 			}
 		}
 
@@ -274,7 +275,7 @@ func UpdateJourneys(apiid string, url string, method string, headers string, req
 		b_data, _ := json.Marshal(newApiFormData)
 		data, err = common.Encrypt(string(b_data))
 		if err != nil {
-			return err
+			log.Print(err)
 		}
 
 		json_data["apiFormData"] = data
@@ -285,7 +286,7 @@ func UpdateJourneys(apiid string, url string, method string, headers string, req
 
 		stmt, err := db.Prepare("UPDATE journeys SET data=?, modified_by=?, modified_date=? WHERE id=?;")
 		if err != nil {
-			return err
+			log.Print(err)
 		}
 		defer stmt.Close()
 
@@ -293,7 +294,7 @@ func UpdateJourneys(apiid string, url string, method string, headers string, req
 		_, err = stmt.Exec(data_link, "API Updated", currentTime.Format("2006-01-02"), journey_id)
 
 		if err != nil {
-			return err
+			log.Print(err)
 		}
 
 		if old_data_url.Valid {
@@ -302,7 +303,6 @@ func UpdateJourneys(apiid string, url string, method string, headers string, req
 
 	}
 
-	return nil
 }
 
 func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
