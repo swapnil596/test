@@ -16,16 +16,16 @@ func TestUpdateNameEndpoint(test *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	// set dummy record for testing
-	var ResultUser models.ApiRegistration
+	var ResultApi models.ApiRegistration
 
-	ResultUser.Name = "NamrataUpdate"
-	ResultUser.Version = "V2"
-	ResultUser.Protocol = "P2"
-	ResultUser.Degree = 0
-	ResultUser.ProjectId = "101"
-	ResultUser.CreatedBy = "A2"
+	ResultApi.Name = "NamrataUpdate"
+	ResultApi.Version = "V2"
+	ResultApi.Protocol = "P2"
+	ResultApi.Degree = 0
+	ResultApi.ProjectId = "101"
+	ResultApi.CreatedBy = "A2"
 
-	id, err := models.CreateApi(ResultUser)
+	id, err := models.CreateApi(ResultApi)
 	if err != nil {
 		test.Logf(err.Error())
 	}
@@ -56,16 +56,16 @@ func TestUpdateNameInvalidJSON(test *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	// set dummy record for testing
-	var ResultUser models.ApiRegistration
+	var ResultApi models.ApiRegistration
 
-	ResultUser.Name = "NamrataUpdate"
-	ResultUser.Version = "V2"
-	ResultUser.Protocol = "P2"
-	ResultUser.Degree = 0
-	ResultUser.ProjectId = "101"
-	ResultUser.CreatedBy = "A2"
+	ResultApi.Name = "UpdateApi_for_test"
+	ResultApi.Version = "V2"
+	ResultApi.Protocol = "P2"
+	ResultApi.Degree = 0
+	ResultApi.ProjectId = "101"
+	ResultApi.CreatedBy = "A2"
 
-	id, err := models.CreateApi(ResultUser)
+	id, err := models.CreateApi(ResultApi)
 	if err != nil {
 		test.Logf(err.Error())
 	}

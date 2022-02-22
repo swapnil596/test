@@ -311,7 +311,6 @@ func UpdateApi(updateapi ApiRegistration, id string, degree string) error {
 	if errdb != nil {
 		return errdb
 	}
-
 	defer db.Close()
 
 	if degree != "" {
@@ -391,7 +390,6 @@ func UpdateName(id string, name string) error {
 	if errdb != nil {
 		return errdb
 	}
-
 	defer db.Close()
 
 	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET name=?, modified_by=?, modified_date=? WHERE id=?;")
@@ -416,7 +414,6 @@ func UpdateTykDetails(id string, tykuri string, rateLimit string, rateLimitPer s
 	if errdb != nil {
 		return errdb
 	}
-
 	defer db.Close()
 
 	stmt, err := db.Prepare("UPDATE db_flowxpert.abhic_api_registration SET tykuri=?, rate_limit=?, rate_limit_per=?, cache_timeout=?, cache_by_header=?, throttle_interval=?, retries=?, url2=?, authkey=?, authtype=?, username=?, password=?, client_id=?, client_secret=?, token_server=?, token_endpoint=?, degree=?, modified_by=?, modified_date=? WHERE id=?;")
@@ -433,36 +430,6 @@ func UpdateTykDetails(id string, tykuri string, rateLimit string, rateLimitPer s
 		return err
 	}
 
-	return nil
-}
-
-// This Delete Function is only used for Testing.
-func PermaDeleteApi(id string) error {
-	var db, errdb = config.Connectdb()
-
-	if errdb != nil {
-		return errdb
-	}
-	defer db.Close()
-
-	stmt, err := db.Prepare("DELETE FROM db_flowxpert.abhic_api_registration WHERE id=?;")
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	result, err := stmt.Exec(id)
-	if err != nil {
-		return err
-	}
-	rows_affected, err := result.RowsAffected()
-	if err != nil {
-		return err
-	}
-
-	if rows_affected == 0 {
-		return errors.New("Invalid ID")
-	}
 	return nil
 }
 
@@ -1165,4 +1132,34 @@ func GetApiDetails(id string, journey_id string, delete_id string) (map[string]i
 		}
 		return reg, nil
 	}
+}
+
+// This Delete Function is only used for Testing.
+func PermaDeleteApi(id string) error {
+	var db, errdb = config.Connectdb()
+
+	if errdb != nil {
+		return errdb
+	}
+	defer db.Close()
+
+	stmt, err := db.Prepare("DELETE FROM db_flowxpert.abhic_api_registration WHERE id=?;")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	result, err := stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+	rows_affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rows_affected == 0 {
+		return errors.New("Invalid ID")
+	}
+	return nil
 }

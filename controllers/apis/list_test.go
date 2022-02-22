@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func TestListAllUsers(t *testing.T) {
+func TestListAllApis(t *testing.T) {
 	// Switch to test mode so you don't get such noisy output
 	gin.SetMode(gin.TestMode)
 
@@ -39,7 +39,7 @@ func TestListAllUsers(t *testing.T) {
 	}
 }
 
-func TestListAllUsersWrongMethod(test *testing.T) {
+func TestListAllApisWrongMethod(test *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	router := gin.Default()

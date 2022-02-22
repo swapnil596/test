@@ -15,16 +15,16 @@ func TestGetApiDetailsEndpoint(test *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	// set dummy record for testing
-	var ResultUser models.ApiRegistration
+	var ResultApi models.ApiRegistration
 
-	ResultUser.Name = "NamrataGetdetails"
-	ResultUser.ProjectId = "101"
-	ResultUser.Version = "V2"
-	ResultUser.Protocol = "P2"
-	ResultUser.CreatedBy = "A2"
-	ResultUser.Degree = 0
+	ResultApi.Name = "GetdetailsApi_for_test"
+	ResultApi.ProjectId = "101"
+	ResultApi.Version = "V2"
+	ResultApi.Protocol = "P2"
+	ResultApi.CreatedBy = "A2"
+	ResultApi.Degree = 0
 
-	id, err := models.CreateApi(ResultUser)
+	id, err := models.CreateApi(ResultApi)
 
 	if err != nil {
 		test.Logf(err.Error())

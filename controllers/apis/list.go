@@ -25,11 +25,11 @@ func ListConstruct(ctx *gin.Context) {
 	draft := ctx.Request.URL.Query().Get("draft")
 	page_s := ctx.Request.URL.Query().Get("page")
 
-	user, err := models.ListAllApis(enable, disable, draft, page_s)
+	api, err := models.ListAllApis(enable, disable, draft, page_s)
 	if err != nil {
 		common.FailResponse(ctx, http.StatusInternalServerError, "Error", gin.H{"errors": validations.ValidateErrors(err)})
 		return
 	}
-	ctx.JSON(http.StatusOK, user)
+	ctx.JSON(http.StatusOK, api)
 	return
 }
