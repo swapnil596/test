@@ -229,7 +229,7 @@ func UpdateJourneys(apiid string, url string, method string, headers string, req
 	}
 	defer db.Close()
 
-	rows, err := db.Query("SELECT journey_id FROM apis_journeys WHERE form_id=?", apiid)
+	rows, err := db.Query("SELECT journey_id FROM apis_journeys WHERE api_id=?", apiid)
 	if err != nil {
 		log.Print(err)
 	}
